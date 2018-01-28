@@ -5,7 +5,18 @@ import org.junit.Test;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
+/**
+ * Test.
+ *
+ * @author Sergey Nazarov
+ * @version $Id$
+ * @since 2018.01.28
+ */
+
 public class CalculatorTest {
+    /**
+     * Test method Add
+     */
     @Test
     public void whenAddOnePlusOneThenTwo() {
         Calculator calc = new Calculator();
@@ -15,6 +26,9 @@ public class CalculatorTest {
         assertThat(result, is(expected));
     }
 
+    /**
+     * Test method substract
+     */
     @Test
     public void whenSevenMinusOneThenSix() {
         Calculator calc = new Calculator();
@@ -24,6 +38,9 @@ public class CalculatorTest {
         assertThat(result, is(expected));
     }
 
+    /**
+     * Test method div
+     */
     @Test
     public void whenEigthDivTwoThenFour() {
         Calculator calc = new Calculator();
@@ -33,6 +50,9 @@ public class CalculatorTest {
         assertThat(result, is(expected));
     }
 
+    /**
+     * Test method multiple
+     */
     @Test
     public void whenTwoMultiplyThreeThenSix() {
         Calculator calc = new Calculator();
