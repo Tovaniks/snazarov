@@ -19,4 +19,12 @@ public class MaxTest {
         assertThat(result, is(10));
     }
 
+    @Test
+    public void whenThirdIsGreaterThanTheFirstAndSecond() {
+        Max maximum = new Max();
+        int result = maximum.max(10, 4,  15);
+        assertThat(result, is(15));
+    }
+
+
 }
