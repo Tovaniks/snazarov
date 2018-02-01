@@ -7,7 +7,7 @@ import static org.junit.Assert.assertThat;
 
 public class CounterTest {
     @Test
-    public void whenFromZeroToSixThenTwenty() {
+    public void whenFromZeroToSixThenTwelve() {
         Counter cnt = new Counter();
         int result;
         result = cnt.add(0, 6);
