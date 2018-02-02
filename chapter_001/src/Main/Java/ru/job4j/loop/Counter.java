@@ -13,7 +13,8 @@ public class Counter {
 
     /**
      * Метод вычисляет сумму четных чисел в промежутке между двумя заданными числами.
-     * @param start начало
+     *
+     * @param start  начало
      * @param finish конец
      * @return сумма.
      */
@@ -21,7 +22,9 @@ public class Counter {
     public int add(int start, int finish) {
         int result = 0;
         for (int i = start; i <= finish; i++) {
-            result = result + (i % 2 == 0 ? i : 0);
+            if (i % 2 == 0) {
+                result = result + i;
+            }
         }
         return result;
     }

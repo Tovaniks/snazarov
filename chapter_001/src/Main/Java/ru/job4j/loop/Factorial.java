@@ -12,6 +12,7 @@ public class Factorial {
 
     /**
      * Метод вычисляет факториал заданного числа.
+     *
      * @param n число, от которого ищем факториал
      * @return факториал.
      */
@@ -20,8 +21,9 @@ public class Factorial {
         int result = n;
         if (n != 0) {
             result = result * calc(n - 1);
-            return result;
+        } else {
+            result = 1;
         }
-        return 1;
+        return result;
     }
 }
