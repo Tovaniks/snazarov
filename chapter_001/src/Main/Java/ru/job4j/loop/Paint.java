@@ -77,8 +77,4 @@ public class Paint {
         return screen.toString();
     }
 
-
-    public static void main(String[] args) {
-        System.out.println(new Paint().pyramid(2));
-    }
 }
