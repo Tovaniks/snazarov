@@ -10,6 +10,12 @@ package ru.job4j.loop;
 
 public class Paint {
 
+    /**
+     * Метод формирует правостороннюю пирамиду заданной высоты из символов ^ и возвращает ее в виде строки.
+     *
+     * @param height  высота
+     * @return пирамиду в виде строки.
+     */
     public String rightTrl(int height) {
         StringBuilder screen = new StringBuilder();
         int weight = height;
@@ -27,6 +33,12 @@ public class Paint {
 
     }
 
+    /**
+     * Метод формирует левостороннюю пирамиду заданной высоты из символов ^ и возвращает ее в виде строки.
+     *
+     * @param height  высота
+     * @return пирамиду в виде строки.
+     */
     public String leftTrl(int height) {
         StringBuilder screen = new StringBuilder();
         int weight = height;
@@ -43,7 +55,12 @@ public class Paint {
         return screen.toString();
     }
 
-
+    /**
+     * Метод формирует пирамиду заданной высоты из символов ^ и возвращает ее в виде строки.
+     *
+     * @param height  высота
+     * @return пирамиду в виде строки.
+     */
     public String pyramid(int height) {
         StringBuilder screen = new StringBuilder();
         int weight = 2 * height - 1;
