@@ -1,7 +1,7 @@
 package ru.job4j.array;
 
 /**
- * Test.
+ * Turn.
  *
  * @author Sergey Nazarov
  * @version $Id$
