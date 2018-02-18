@@ -20,17 +20,17 @@ public class ArrayDuplicate {
      */
     public String[] remove(String[] array) {
         String swap;
-        int endOfMassive = array.length;
-        for (int i = 0; i < endOfMassive; i++) {
-            for (int j = i + 1; j < endOfMassive; j++) {
+        int end = array.length;
+        for (int i = 0; i < end; i++) {
+            for (int j = i + 1; j < end; j++) {
                 if (array[i].equals(array[j])) {
-                    swap = array[endOfMassive - 1];
-                    array[endOfMassive - 1] = array[j];
+                    swap = array[end - 1];
+                    array[end - 1] = array[j];
                     array[j] = swap;
-                    endOfMassive--;
+                    end--;
                 }
             }
         }
-        return Arrays.copyOf(array, endOfMassive);
+        return Arrays.copyOf(array, end);
     }
 }

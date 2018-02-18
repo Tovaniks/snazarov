@@ -8,15 +8,15 @@ import static org.junit.Assert.assertThat;
 public class SquareTest {
     @Test
     public void whenArrayLenIsSix() {
-        Square sqr = new Square();
-        int[] result = sqr.calculate(6);
+        Square square = new Square();
+        int[] result = square.calculate(6);
         assertThat(result, is(new int[]{1, 4, 9, 16, 25, 36}));
     }
 
     @Test
     public void whenArrayLenIsFour() {
-        Square sqr = new Square();
-        int[] result = sqr.calculate(4);
+        Square square = new Square();
+        int[] result = square.calculate(4);
         assertThat(result, is(new int[]{1, 4, 9, 16}));
     }
 }

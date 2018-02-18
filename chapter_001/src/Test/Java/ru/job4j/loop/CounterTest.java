@@ -8,9 +8,9 @@ import static org.junit.Assert.assertThat;
 public class CounterTest {
     @Test
     public void whenFromZeroToSixThenTwelve() {
-        Counter cnt = new Counter();
+        Counter counter = new Counter();
         int result;
-        result = cnt.add(0, 6);
+        result = counter.add(0, 6);
         assertThat(result, is(12));
     }
 }

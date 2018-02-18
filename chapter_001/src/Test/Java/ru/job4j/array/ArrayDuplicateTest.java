@@ -8,16 +8,16 @@ import static org.junit.Assert.assertThat;
 public class ArrayDuplicateTest {
     @Test
     public void whenArrayWithDuplicate() {
-        ArrayDuplicate arrayDuplicate = new ArrayDuplicate();
-        String[] result = arrayDuplicate.remove(new String[]{"Привет", "Мир", "Привет", "Супер", "Мир"});
+        ArrayDuplicate array = new ArrayDuplicate();
+        String[] result = array.remove(new String[]{"Привет", "Мир", "Привет", "Супер", "Мир"});
         assertThat(result, is(new String[]{"Привет", "Мир", "Супер"}));
     }
 
 
     @Test
     public void whenArrayWithoutDuplicate() {
-        ArrayDuplicate arrayDuplicate = new ArrayDuplicate();
-        String[] result = arrayDuplicate.remove(new String[]{"привет", "пока", "один", "две"});
+        ArrayDuplicate array = new ArrayDuplicate();
+        String[] result = array.remove(new String[]{"привет", "пока", "один", "две"});
         assertThat(result, is(new String[]{"привет", "пока", "один", "две"}));
     }
 

@@ -8,15 +8,15 @@ import static org.junit.Assert.assertThat;
 public class FactorialTest {
     @Test
     public void whenFiveThenOneHundredTwenty() {
-        Factorial f = new Factorial();
-        int result = f.calc(5);
+        Factorial factorial = new Factorial();
+        int result = factorial.calc(5);
         assertThat(result, is(120));
     }
 
     @Test
     public void whenZeroThenOne() {
-        Factorial f = new Factorial();
-        int result = f.calc(0);
+        Factorial factorial = new Factorial();
+        int result = factorial.calc(0);
         assertThat(result, is(1));
     }
 }

@@ -20,7 +20,7 @@ public class Board {
 
     public String paint(int width, int height) {
         StringBuilder screen = new StringBuilder();
-        String ln = System.lineSeparator();
+        String separator = System.lineSeparator();
         for (int i = 1; i <= height; i++) {
             for (int y = 1; y <= width; y++) {
                 if ((i + y) % 2 == 0) {
@@ -29,7 +29,7 @@ public class Board {
                     screen.append(" ");
                 }
             }
-            screen.append(ln);
+            screen.append(separator);
         }
         return screen.toString();
     }

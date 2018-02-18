@@ -23,16 +23,16 @@ public class WordsComprasion {
 
         boolean result = false;
 
-        String[] originWord = origin.split("");
-        String[] subWord = sub.split("");
+        String[] text = origin.split("");
+        String[] subtext = sub.split("");
 
-        for (int i = 0; i < originWord.length; i++) {
-            if (originWord.length - i - subWord.length >= 0 && originWord[i].equals(subWord[0])) {
+        for (int i = 0; i < text.length; i++) {
+            if (text.length - i - subtext.length >= 0 && text[i].equals(subtext[0])) {
                 result = true;
-                for (int j = 1; j < subWord.length; j++) {
-                    if (!originWord[i + j].equals(subWord[j])) {
+                for (int j = 1; j < subtext.length; j++) {
+                    if (!text[i + j].equals(subtext[j])) {
                         result = false;
-                        System.out.print(originWord[i + j]);
+                        System.out.print(text[i + j]);
                         break;
                     }
                 }
