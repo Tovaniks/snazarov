@@ -47,7 +47,7 @@ public class StartUI {
         ConsoleInput input = new ConsoleInput();
         while (true) {
             this.showMenu();
-            String answer = input.ask("Select:");
+            String answer = this.input.ask("Select:");
             if (answer.equals(ADD)) {
                 this.addItem();
             } else if (answer.equals(SHOW)) {
@@ -71,8 +71,8 @@ public class StartUI {
      * Поиск заявки по названию.
      */
     private void findByName() {
-        String answer = input.ask("\nВведите имя заявки:");
-        Item[] result = tracker.findByName(answer);
+        String answer = this.input.ask("\nВведите имя заявки:");
+        Item[] result = this.tracker.findByName(answer);
         this.showTask(result);
     }
 
@@ -80,8 +80,8 @@ public class StartUI {
      * Поиск заявки по ID.
      */
     private void findByID() {
-        String answer = input.ask("\nВведите ID заявки:");
-        Item result = tracker.findByID(answer);
+        String answer = this.input.ask("\nВведите ID заявки:");
+        Item result = this.tracker.findByID(answer);
         this.showTask(result);
     }
 
@@ -89,17 +89,17 @@ public class StartUI {
      * Удаление заявки.
      */
     private void deleteItem() {
-        String answer = input.ask("\nВведите ID заявки:");
-        tracker.delete(answer);
+        String answer = this.input.ask("\nВведите ID заявки:");
+        this.tracker.delete(answer);
     }
 
     /**
      * Редактирование заявки
      */
     private void editItem() {
-        String id = input.ask("\nВведите ID заявки:");
-        String name = input.ask("\nВведите новое имя заявки:");
-        String desc = input.ask("\nВведите описание заявки:");
+        String id = this.input.ask("\nВведите ID заявки:");
+        String name = this.input.ask("\nВведите новое имя заявки:");
+        String desc = this.input.ask("\nВведите описание заявки:");
         Item item = new Item(name, desc, System.currentTimeMillis());
         item.setID(id);
         this.tracker.replace(id, item);
