@@ -8,7 +8,7 @@ import static org.junit.Assert.assertThat;
 public class TeacherTest {
     @Test
     public void whenTeacherTeaching() {
-        Teacher teacher= new Teacher();
+        Teacher teacher = new Teacher();
         teacher.setName("Петр Сергеевич");
         teacher.setProfession("Профессор");
         Studient studient = new Studient();
