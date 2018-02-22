@@ -43,7 +43,7 @@ public class StartUI {
     /**
      * инициализация программы.
      */
-    private void init() {
+    public void init() {
         ConsoleInput input = new ConsoleInput();
         while (true) {
             this.showMenu();

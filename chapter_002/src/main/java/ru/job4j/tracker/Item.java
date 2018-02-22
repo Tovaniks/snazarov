@@ -13,6 +13,12 @@ public class Item {
         this.created = create;
     }
 
+    public Item(String name, String description) {
+        this.name = name;
+        this.desc = description;
+        this.created = System.currentTimeMillis();
+    }
+
     public String getID() {
         return this.id;
     }
