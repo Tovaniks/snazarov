@@ -18,7 +18,7 @@ public class StartUI {
     private static final String EXIT = "6";
     private final Tracker tracker;
     private final Input input;
-
+    private final String separator = System.lineSeparator();
 
     /**
      * Конструтор инициализирующий поля.
@@ -44,7 +44,7 @@ public class StartUI {
      * инициализация программы.
      */
     public void init() {
-        ConsoleInput input = new ConsoleInput();
+        //ConsoleInput input = new ConsoleInput();
         while (true) {
             this.showMenu();
             String answer = this.input.ask("Select:");
@@ -63,7 +63,7 @@ public class StartUI {
             } else if (answer.equals(EXIT)) {
                 break;
             }
-            System.out.println("\n\n\n");
+            System.out.println(this.separator + this.separator + this.separator);
         }
     }
 
@@ -71,7 +71,7 @@ public class StartUI {
      * Поиск заявки по названию.
      */
     private void findByName() {
-        String answer = this.input.ask("\nВведите имя заявки:");
+        String answer = this.input.ask(this.separator + "Введите имя заявки:");
         Item[] result = this.tracker.findByName(answer);
         this.showTask(result);
     }
@@ -80,7 +80,7 @@ public class StartUI {
      * Поиск заявки по ID.
      */
     private void findByID() {
-        String answer = this.input.ask("\nВведите ID заявки:");
+        String answer = this.input.ask(this.separator + "Введите ID заявки:");
         Item result = this.tracker.findByID(answer);
         this.showTask(result);
     }
@@ -89,7 +89,7 @@ public class StartUI {
      * Удаление заявки.
      */
     private void deleteItem() {
-        String answer = this.input.ask("\nВведите ID заявки:");
+        String answer = this.input.ask(this.separator + "Введите ID заявки:");
         this.tracker.delete(answer);
     }
 
@@ -97,9 +97,9 @@ public class StartUI {
      * Редактирование заявки
      */
     private void editItem() {
-        String id = this.input.ask("\nВведите ID заявки:");
-        String name = this.input.ask("\nВведите новое имя заявки:");
-        String desc = this.input.ask("\nВведите описание заявки:");
+        String id = this.input.ask(this.separator + "Введите ID заявки:");
+        String name = this.input.ask(this.separator + "Введите новое имя заявки:");
+        String desc = this.input.ask(this.separator + "Введите описание заявки:");
         Item item = new Item(name, desc, System.currentTimeMillis());
         item.setID(id);
         this.tracker.replace(id, item);
@@ -110,7 +110,7 @@ public class StartUI {
      * Добавление заявки
      */
     private void addItem() {
-        System.out.println("\n\n------------ Добавление новой заявки --------------");
+        System.out.println(this.separator + this.separator + "------------ Добавление новой заявки --------------");
         String name = this.input.ask("Введите имя заявки :");
         String desc = this.input.ask("Введите описание :");
         Item item = new Item(name, desc, System.currentTimeMillis());
@@ -129,7 +129,7 @@ public class StartUI {
      * Консольное меню
      */
     private void showMenu() {
-        System.out.println("------------ Меню: ------------\n");
+        System.out.println("------------ Меню: ------------" + this.separator);
         System.out.println("0. Добавить заявку");
         System.out.println("1. Показать все заявки");
         System.out.println("2. Отредактировать заявку");
@@ -143,12 +143,12 @@ public class StartUI {
      * Отображение списка заявок
      */
     private void showTask(Item[] items) {
-        System.out.println("\n\n------------ Список заявок: --------------\n\n");
+        System.out.println(this.separator + this.separator + "------------ Список заявок: --------------" + this.separator + this.separator);
         for (Item item : items) {
             System.out.println("ID: " + item.getID());
             System.out.println("Заявка: " + item.getName());
             System.out.println("Описание: " + item.getDesc());
-            System.out.println("Дата создания: " + item.getCreated() + "\n");
+            System.out.println("Дата создания: " + item.getCreated() + this.separator);
         }
     }
 
@@ -156,10 +156,10 @@ public class StartUI {
      * Отображение заявки
      */
     private void showTask(Item item) {
-        System.out.println("\n\n------------ Результат: --------------\n\n");
+        System.out.println(this.separator + this.separator + "------------ Результат: --------------" + this.separator + this.separator);
         System.out.println("ID: " + item.getID());
         System.out.println("Заявка: " + item.getName());
         System.out.println("Описание: " + item.getDesc());
-        System.out.println("Дата создания: " + item.getCreated() + "\n");
+        System.out.println("Дата создания: " + item.getCreated() + this.separator);
     }
 }
