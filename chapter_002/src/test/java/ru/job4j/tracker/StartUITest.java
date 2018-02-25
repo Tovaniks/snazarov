@@ -15,23 +15,10 @@ public class StartUITest {
     private final PrintStream stdout = System.out;
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
     private final String separator = System.lineSeparator();
-    private final StringBuilder menu = new StringBuilder().append("------------ Меню: ------------")
-                                                            .append(this.separator)
-                                                            .append(this.separator)
-                                                            .append("0. Добавить заявку")
-                                                            .append(this.separator)
-                                                            .append("1. Показать все заявки")
-                                                            .append(this.separator)
-                                                            .append("2. Отредактировать заявку")
-                                                            .append(this.separator)
-                                                            .append("3. Удалить заявку")
-                                                            .append(this.separator)
-                                                            .append("4. Найти заявку по ID")
-                                                            .append(this.separator)
-                                                            .append("5. Найти заявку по названию")
-                                                            .append(this.separator)
-                                                            .append("6. Выход")
-                                                            .append(this.separator);
+    private final String menu = String.format("------------ Меню: ------------%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
+            this.separator, this.separator, "0. Добавить заявку", this.separator, "1. Показать все заявки", this.separator,
+            "2. Отредактировать заявку", this.separator, "3. Удалить заявку", this.separator, "4. Найти заявку по ID",
+            this.separator, "5. Найти заявку по названию", this.separator, "6. Выход", this.separator);
 
 
     @Test
@@ -79,24 +66,12 @@ public class StartUITest {
 
         assertThat(
                 result,
-                is(new StringBuilder().append(this.separator).append(this.separator)
-                        .append("------------ Список заявок: --------------")
-                        .append(this.separator)
-                        .append(this.separator)
-                        .append(this.separator)
-                        .append("ID: " + first.getID() + this.separator)
-                        .append("Заявка: " + first.getName() + this.separator)
-                        .append("Описание: " + first.getDesc() + this.separator)
-                        .append("Дата создания: " + first.getCreated() + this.separator + this.separator)
-                        .append("ID: " + second.getID() + this.separator)
-                        .append("Заявка: " + second.getName() + this.separator)
-                        .append("Описание: " + second.getDesc() + this.separator)
-                        .append("Дата создания: " + second.getCreated() + this.separator + this.separator)
-                        .append(this.separator)
-                        .append(this.separator)
-                        .append(this.separator)
-                        .append(this.separator)
-                        .toString()
+                is(String.format("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s", this.separator, this.separator,
+                        "------------ Список заявок: --------------", this.separator, this.separator, this.separator, "ID: ", first.getID(),
+                        this.separator, "Заявка: ", first.getName(), this.separator, "Описание: ", first.getDesc(), this.separator, "Дата создания: ",
+                        first.getCreated(), this.separator, this.separator, "ID: ", second.getID(), this.separator, "Заявка: ", second.getName(),
+                        this.separator, "Описание: ", second.getDesc(), this.separator, "Дата создания: ", second.getCreated(), this.separator,
+                        this.separator, this.separator, this.separator, this.separator, this.separator)
                 ));
 
     }
@@ -115,21 +90,11 @@ public class StartUITest {
 
         assertThat(
                 result,
-                is(new StringBuilder().append(this.separator).append(this.separator)
-                        .append("------------ Результат: --------------")
-                        .append(this.separator)
-                        .append(this.separator)
-                        .append(this.separator)
-                        .append("ID: " + third.getID() + this.separator)
-                        .append("Заявка: " + third.getName() + this.separator)
-                        .append("Описание: " + third.getDesc() + this.separator)
-                        .append("Дата создания: " + third.getCreated() + this.separator + this.separator)
-                        .append(this.separator)
-                        .append(this.separator)
-                        .append(this.separator)
-                        .append(this.separator)
-                        .toString()
-                ));
+                is(String.format("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s", this.separator, this.separator,
+                        "------------ Результат: --------------", this.separator, this.separator, this.separator, "ID: ",
+                        third.getID(), this.separator, "Заявка: ", third.getName(), this.separator, "Описание: ", third.getDesc(),
+                        this.separator, "Дата создания: ", third.getCreated(), this.separator, this.separator, this.separator,
+                        this.separator, this.separator, this.separator)));
 
     }
 
@@ -145,24 +110,13 @@ public class StartUITest {
         String result = initResult(new StubInput(new String[]{"5", "Баг", "6"}), tracker);
         assertThat(
                 result,
-                is(new StringBuilder().append(this.separator).append(this.separator)
-                        .append("------------ Список заявок: --------------")
-                        .append(this.separator)
-                        .append(this.separator)
-                        .append(this.separator)
-                        .append("ID: " + second.getID() + this.separator)
-                        .append("Заявка: " + second.getName() + this.separator)
-                        .append("Описание: " + second.getDesc() + this.separator)
-                        .append("Дата создания: " + second.getCreated() + this.separator + this.separator)
-                        .append("ID: " + third.getID() + this.separator)
-                        .append("Заявка: " + third.getName() + this.separator)
-                        .append("Описание: " + third.getDesc() + this.separator)
-                        .append("Дата создания: " + third.getCreated() + this.separator + this.separator)
-                        .append(this.separator)
-                        .append(this.separator)
-                        .append(this.separator)
-                        .append(this.separator)
-                        .toString()
+                is(
+                        String.format("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s", this.separator, this.separator,
+                                "------------ Список заявок: --------------", this.separator, this.separator, this.separator, "ID: ", second.getID(),
+                                this.separator, "Заявка: ", second.getName(), this.separator, "Описание: ", second.getDesc(), this.separator,
+                                "Дата создания: ", second.getCreated(), this.separator, this.separator, "ID: ", third.getID(), this.separator,
+                                "Заявка: ", third.getName(), this.separator, "Описание: ", third.getDesc(), this.separator, "Дата создания: ",
+                                third.getCreated(), this.separator, this.separator, this.separator, this.separator, this.separator, this.separator)
                 ));
 
     }
@@ -171,7 +125,7 @@ public class StartUITest {
         System.setOut(new PrintStream(out));
         new StartUI(input, tracker).init();
         String result = new String(out.toByteArray());
-        return result.replaceAll(this.menu.toString(), "");
+        return result.replaceAll(this.menu, "");
     }
 
 
