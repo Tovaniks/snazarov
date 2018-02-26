@@ -7,9 +7,7 @@ package ru.job4j.tracker;
  * @version $Id$
  * @since 2018.02.25
  */
-
 public class MenuTracker {
-
 
     private final static String SEPARATOR = System.lineSeparator();
     private final Input input;
@@ -23,7 +21,6 @@ public class MenuTracker {
      * @param input   ввод данных.
      * @param tracker хранилище заявок.
      */
-
     public MenuTracker(Input input, Tracker tracker) {
         this.input = input;
         this.tracker = tracker;
@@ -32,7 +29,6 @@ public class MenuTracker {
     /**
      * инициализируем меню
      */
-
     public void create() {
         addMenuItem(this.new AddItem(this.positions));
         addMenuItem(new MenuTracker.ShowItem(this.positions));
@@ -92,8 +88,6 @@ public class MenuTracker {
      * @version $Id$
      * @since 2018.02.25
      */
-
-
     private class AddItem implements UserAction {
 
         private final int positions;
@@ -140,7 +134,6 @@ public class MenuTracker {
         }
     }
 
-
     /**
      * Exit
      *
@@ -148,7 +141,6 @@ public class MenuTracker {
      * @version $Id$
      * @since 2018.02.25
      */
-
     private class Exit implements UserAction {
 
         private final int positions;
@@ -197,11 +189,9 @@ public class MenuTracker {
      * @version $Id$
      * @since 2018.02.25
      */
-
     private static class ShowItem implements UserAction {
 
         private final int positions;
-
 
         /**
          * конструктор
@@ -247,7 +237,6 @@ public class MenuTracker {
      * @version $Id$
      * @since 2018.02.25
      */
-
     private static class FindByName implements UserAction {
 
         private final int positions;
@@ -282,13 +271,14 @@ public class MenuTracker {
             new ShowTasks().showTask(result);
         }
 
-
+        /**
+         * Возвращаем описание пункта меню
+         */
         @Override
         public String info() {
             return String.format("%s. %s", getKey(), "Найти заявку по названию");
         }
     }
-
 
     /**
      * FindByID
@@ -297,11 +287,9 @@ public class MenuTracker {
      * @version $Id$
      * @since 2018.02.25
      */
-
     private static class FindByID implements UserAction {
 
         private final int positions;
-
 
         /**
          * конструктор
@@ -342,7 +330,6 @@ public class MenuTracker {
         }
     }
 
-
     /**
      * ShowTasks
      *
@@ -350,9 +337,7 @@ public class MenuTracker {
      * @version $Id$
      * @since 2018.02.25
      */
-
     private static class ShowTasks {
-
 
         /**
          * Выводим заявки списком
@@ -387,12 +372,8 @@ public class MenuTracker {
             System.out.println("Описание: " + item.getDesc());
             System.out.println("Дата создания: " + item.getCreated() + SEPARATOR);
         }
-
-
     }
-
 }
-
 
 /**
  * DeleteItem
@@ -401,8 +382,6 @@ public class MenuTracker {
  * @version $Id$
  * @since 2018.02.25
  */
-
-
 class DeleteItem implements UserAction {
 
     private final String separator = System.lineSeparator();
@@ -447,7 +426,6 @@ class DeleteItem implements UserAction {
     }
 }
 
-
 /**
  * EditItem
  *
@@ -455,7 +433,6 @@ class DeleteItem implements UserAction {
  * @version $Id$
  * @since 2018.02.25
  */
-
 class EditItem implements UserAction {
 
     private final String separator = System.lineSeparator();
@@ -494,7 +471,6 @@ class EditItem implements UserAction {
         Item item = new Item(name, desc, System.currentTimeMillis());
         item.setID(id);
         tracker.replace(id, item);
-
     }
 
     /**

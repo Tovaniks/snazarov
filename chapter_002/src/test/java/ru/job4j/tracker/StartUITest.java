@@ -20,7 +20,6 @@ public class StartUITest {
             "2. Отредактировать заявку", this.separator, "3. Удалить заявку", this.separator, "4. Найти заявку по ID",
             this.separator, "5. Найти заявку по названию", this.separator, "6. Выход", this.separator);
 
-
     @Test
     public void whenUserAddItemsThenTrackerHasNewItemWithSameName() {
         Tracker tracker = new Tracker();
@@ -63,7 +62,6 @@ public class StartUITest {
         tracker.add(first);
         tracker.add(second);
         String result = initResult(new StubInput(new String[]{"1", "6"}), tracker);
-
         assertThat(
                 result,
                 is(String.format("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s", this.separator, this.separator,
@@ -73,9 +71,7 @@ public class StartUITest {
                         this.separator, "Описание: ", second.getDesc(), this.separator, "Дата создания: ", second.getCreated(), this.separator,
                         this.separator, this.separator, this.separator, this.separator, this.separator)
                 ));
-
     }
-
 
     @Test
     public void whenFindByIDThenShow() {
@@ -87,7 +83,6 @@ public class StartUITest {
         tracker.add(second);
         tracker.add(third);
         String result = initResult(new StubInput(new String[]{"4", third.getID(), "6"}), tracker);
-
         assertThat(
                 result,
                 is(String.format("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s", this.separator, this.separator,
@@ -95,7 +90,6 @@ public class StartUITest {
                         third.getID(), this.separator, "Заявка: ", third.getName(), this.separator, "Описание: ", third.getDesc(),
                         this.separator, "Дата создания: ", third.getCreated(), this.separator, this.separator, this.separator,
                         this.separator, this.separator, this.separator)));
-
     }
 
     @Test
@@ -127,7 +121,6 @@ public class StartUITest {
         String result = new String(out.toByteArray());
         return result.replaceAll(this.menu, "");
     }
-
 
     @Before
     public void loadOutput() {

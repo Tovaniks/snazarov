@@ -36,7 +36,6 @@ public class StartUI {
      * инициализация программы.
      */
     public void init() {
-        //ConsoleInput input = new ConsoleInput();
         MenuTracker menu = new MenuTracker(this.input, this.tracker);
         menu.create();
         do {
