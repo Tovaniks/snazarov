@@ -7,13 +7,30 @@ package ru.job4j.tracker;
  * @version $Id$
  * @since 2018.02.27
  */
-public class ValidateInput extends ConsoleInput {
+public class ValidateInput implements Input {
+
+    private final Input input;
+
+    public ValidateInput(Input input) {
+        this.input = input;
+    }
 
     /**
      * Получаем ответ от пользователя
      *
      * @param question запрос
-     * @param range диапазон пунктов меню
+     * @return ответ пользователя.
+     */
+    @Override
+    public String ask(String question) {
+        return this.input.ask(question);
+    }
+
+    /**
+     * Получаем ответ от пользователя
+     *
+     * @param question запрос
+     * @param range    диапазон пунктов меню
      * @return ID пункта меню
      */
     @Override
@@ -21,12 +38,9 @@ public class ValidateInput extends ConsoleInput {
         int key;
         do {
             try {
-                key = super.ask(question, range);
+                key = this.input.ask(question, range);
                 break;
             } catch (MenuOutException moe) {
-                for (int i : range) {
-                    System.out.println(i);
-                }
                 System.out.println("Введите правильное ID пункта меню");
             } catch (NumberFormatException nfe) {
                 System.out.println("Пожалуйста, введите виладные данные");
