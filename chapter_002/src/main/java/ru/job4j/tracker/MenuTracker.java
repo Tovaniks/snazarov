@@ -71,7 +71,11 @@ public class MenuTracker {
      */
     public boolean choose() {
         boolean result = false;
-        int index = Integer.valueOf(this.input.ask("Select:"));
+        int[] range = new int[positions];
+        for (int i = 0; i < positions; i++) {
+            range[i] = i;
+        }
+        int index = this.input.ask("Select:", range);
         if (this.actions[index].info().equals(String.format("%s. %s", positions - 1, "Выход"))) {
             result = true;
         } else {

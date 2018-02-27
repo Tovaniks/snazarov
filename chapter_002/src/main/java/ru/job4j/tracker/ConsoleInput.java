@@ -24,4 +24,27 @@ public class ConsoleInput implements Input {
         System.out.print(question);
         return scanner.nextLine();
     }
+
+    /**
+     * Получаем ответ от пользователя
+     *
+     * @param question запрос
+     * @param range диапазон пунктов меню
+     * @return ID пункта меню
+     */
+    @Override
+    public int ask(String question, int[] range) {
+        int key = Integer.valueOf(this.ask(question));
+        boolean exists = false;
+        for (int value : range) {
+            if (value == key) {
+                exists = true;
+                break;
+            }
+        }
+        if (!exists) {
+            throw new MenuOutException(String.format("Введите правильное ID пункта меню. r %s не существует", String.valueOf(key)));
+        }
+        return key;
+    }
 }
