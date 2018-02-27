@@ -30,13 +30,13 @@ public class MenuTracker {
      * инициализируем меню
      */
     public void create() {
-        addMenuItem(this.new AddItem(this.positions));
-        addMenuItem(new MenuTracker.ShowItem(this.positions));
-        addMenuItem(new EditItem(this.positions));
-        addMenuItem(new DeleteItem(this.positions));
-        addMenuItem(new MenuTracker.FindByID(this.positions));
-        addMenuItem(new MenuTracker.FindByName(this.positions));
-        addMenuItem(this.new Exit(this.positions));
+        addMenuItem(this.new AddItem(this.positions, "Добавить заявку"));
+        addMenuItem(new MenuTracker.ShowItem(this.positions, "Показать все заявки"));
+        addMenuItem(new EditItem(this.positions, "Отредактировать заявку"));
+        addMenuItem(new DeleteItem(this.positions, "Удалить заявку"));
+        addMenuItem(new MenuTracker.FindByID(this.positions, "Найти заявку по ID"));
+        addMenuItem(new MenuTracker.FindByName(this.positions, "Найти заявку по названию"));
+        addMenuItem(this.new Exit(this.positions, "Выход"));
     }
 
     /**
@@ -92,25 +92,16 @@ public class MenuTracker {
      * @version $Id$
      * @since 2018.02.25
      */
-    private class AddItem implements UserAction {
-
-        private final int positions;
+    private class AddItem extends BaseAction {
 
         /**
          * конструктор
          *
          * @param positions id пункта меню
+         * @param name      название пункта меню
          */
-        public AddItem(int positions) {
-            this.positions = positions;
-        }
-
-        /**
-         * Возвращаем ID пункта меню
-         */
-        @Override
-        public int getKey() {
-            return positions;
+        public AddItem(final int positions, final String name) {
+            super(positions, name);
         }
 
         /**
@@ -128,14 +119,6 @@ public class MenuTracker {
             tracker.add(item);
             System.out.println(String.format("------------ Новая заявка с getId : %s-----------", item.getID()));
         }
-
-        /**
-         * Возвращаем описание пункта меню
-         */
-        @Override
-        public String info() {
-            return String.format("%s. %s", getKey(), "Добавить заявку");
-        }
     }
 
     /**
@@ -145,25 +128,16 @@ public class MenuTracker {
      * @version $Id$
      * @since 2018.02.25
      */
-    private class Exit implements UserAction {
-
-        private final int positions;
+    private class Exit extends BaseAction {
 
         /**
          * конструктор
          *
          * @param positions id пункта меню
+         * @param name      название пункта меню
          */
-        public Exit(int positions) {
-            this.positions = positions;
-        }
-
-        /**
-         * Возвращаем ID пункта меню
-         */
-        @Override
-        public int getKey() {
-            return this.positions;
+        public Exit(int positions, String name) {
+            super(positions, name);
         }
 
         /**
@@ -176,14 +150,6 @@ public class MenuTracker {
         public void execute(Input input, Tracker tracker) {
 
         }
-
-        /**
-         * Возвращаем описание пункта меню
-         */
-        @Override
-        public String info() {
-            return String.format("%s. %s", getKey(), "Выход");
-        }
     }
 
     /**
@@ -193,25 +159,16 @@ public class MenuTracker {
      * @version $Id$
      * @since 2018.02.25
      */
-    private static class ShowItem implements UserAction {
-
-        private final int positions;
+    private static class ShowItem extends BaseAction {
 
         /**
          * конструктор
          *
          * @param positions id пункта меню
+         * @param name      название пункта меню
          */
-        public ShowItem(int positions) {
-            this.positions = positions;
-        }
-
-        /**
-         * Возвращаем ID пункта меню
-         */
-        @Override
-        public int getKey() {
-            return this.positions;
+        public ShowItem(int positions, String name) {
+            super(positions, name);
         }
 
         /**
@@ -224,14 +181,6 @@ public class MenuTracker {
         public void execute(Input input, Tracker tracker) {
             new ShowTasks().showTask(tracker.findAll());
         }
-
-        /**
-         * Возвращаем описание пункта меню
-         */
-        @Override
-        public String info() {
-            return String.format("%s. %s", getKey(), "Показать все заявки");
-        }
     }
 
     /**
@@ -241,25 +190,16 @@ public class MenuTracker {
      * @version $Id$
      * @since 2018.02.25
      */
-    private static class FindByName implements UserAction {
-
-        private final int positions;
+    private static class FindByName extends BaseAction {
 
         /**
          * конструктор
          *
          * @param positions id пункта меню
+         * @param name      название пункта меню
          */
-        public FindByName(int positions) {
-            this.positions = positions;
-        }
-
-        /**
-         * Возвращаем ID пункта меню
-         */
-        @Override
-        public int getKey() {
-            return this.positions;
+        public FindByName(int positions, String name) {
+            super(positions, name);
         }
 
         /**
@@ -274,14 +214,6 @@ public class MenuTracker {
             Item[] result = tracker.findByName(answer);
             new ShowTasks().showTask(result);
         }
-
-        /**
-         * Возвращаем описание пункта меню
-         */
-        @Override
-        public String info() {
-            return String.format("%s. %s", getKey(), "Найти заявку по названию");
-        }
     }
 
     /**
@@ -291,25 +223,16 @@ public class MenuTracker {
      * @version $Id$
      * @since 2018.02.25
      */
-    private static class FindByID implements UserAction {
-
-        private final int positions;
+    private static class FindByID extends BaseAction {
 
         /**
          * конструктор
          *
          * @param positions id пункта меню
+         * @param name      название пункта меню
          */
-        public FindByID(int positions) {
-            this.positions = positions;
-        }
-
-        /**
-         * Возвращаем ID пункта меню
-         */
-        @Override
-        public int getKey() {
-            return this.positions;
+        public FindByID(int positions, String name) {
+            super(positions, name);
         }
 
         /**
@@ -323,14 +246,6 @@ public class MenuTracker {
             String answer = input.ask(SEPARATOR + "Введите ID заявки:");
             Item result = tracker.findByID(answer);
             new ShowTasks().showTask(result);
-        }
-
-        /**
-         * Возвращаем описание пункта меню
-         */
-        @Override
-        public String info() {
-            return String.format("%s. %s", getKey(), "Найти заявку по ID");
         }
     }
 
@@ -386,27 +301,18 @@ public class MenuTracker {
  * @version $Id$
  * @since 2018.02.25
  */
-class DeleteItem implements UserAction {
+class DeleteItem extends BaseAction {
 
     private final String separator = System.lineSeparator();
-
-    private final int positions;
 
     /**
      * конструктор
      *
      * @param positions id пункта меню
+     * @param name      название пункта меню
      */
-    public DeleteItem(int positions) {
-        this.positions = positions;
-    }
-
-    /**
-     * Возвращаем ID пункта меню
-     */
-    @Override
-    public int getKey() {
-        return this.positions;
+    public DeleteItem(int positions, String name) {
+        super(positions, name);
     }
 
     /**
@@ -420,14 +326,6 @@ class DeleteItem implements UserAction {
         String answer = input.ask(this.separator + "Введите ID заявки:");
         tracker.delete(answer);
     }
-
-    /**
-     * Возвращаем описание пункта меню
-     */
-    @Override
-    public String info() {
-        return String.format("%s. %s", getKey(), "Удалить заявку");
-    }
 }
 
 /**
@@ -437,27 +335,18 @@ class DeleteItem implements UserAction {
  * @version $Id$
  * @since 2018.02.25
  */
-class EditItem implements UserAction {
+class EditItem extends BaseAction {
 
     private final String separator = System.lineSeparator();
-
-    private final int positions;
 
     /**
      * конструктор
      *
      * @param positions id пункта меню
+     * @param name      название пункта меню
      */
-    public EditItem(int positions) {
-        this.positions = positions;
-    }
-
-    /**
-     * Возвращаем ID пункта меню
-     */
-    @Override
-    public int getKey() {
-        return this.positions;
+    public EditItem(int positions, String name) {
+        super(positions, name);
     }
 
     /**
@@ -475,13 +364,5 @@ class EditItem implements UserAction {
         Item item = new Item(name, desc, System.currentTimeMillis());
         item.setID(id);
         tracker.replace(id, item);
-    }
-
-    /**
-     * Возвращаем описание пункта меню
-     */
-    @Override
-    public String info() {
-        return String.format("%s. %s", getKey(), "Отредактировать заявку");
     }
 }

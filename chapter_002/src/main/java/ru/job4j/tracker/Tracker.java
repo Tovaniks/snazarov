@@ -93,7 +93,6 @@ public class Tracker {
         return result.findAll();
     }
 
-
     /**
      * Ищем таску по уникальному ID
      *
