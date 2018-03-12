@@ -26,7 +26,7 @@ public class Board {
      * @param cell клетка
      * @return возвращает true/false на существование клетки.
      */
-    private static boolean validCell(Cell cell) {
+    private boolean validCell(Cell cell) {
         boolean result = true;
         if (cell.getX() < 0 || cell.getX() > ROW - 1 || cell.getY() < 0 || cell.getY() > COLUMN - 1) {
             result = false;
@@ -42,7 +42,7 @@ public class Board {
      * @param dest конец
      * @return возвращает true/false на существование клеток.
      */
-    public static boolean validCells(Cell source, Cell dest) {
+    public boolean validCells(Cell source, Cell dest) {
         boolean result = true;
         if (!(validCell(source) && validCell(dest))) {
             result = false;

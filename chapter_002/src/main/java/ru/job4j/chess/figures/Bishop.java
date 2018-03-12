@@ -34,7 +34,7 @@ public class Bishop extends Figure {
         int coefficientX = getCoefficient(source.getX(), dest.getX());
         int coefficientY = getCoefficient(source.getY(), dest.getY());
         Cell[] result;
-        if (Board.validCells(source, dest) && moveLikeBishop(source, dest)) {
+        if (new Board().validCells(source, dest) && moveLikeBishop(source, dest)) {
             result = way(source, Math.abs(dest.getX() - source.getX()) + 1, coefficientX, coefficientY);
         } else {
             throw new ImpossibleMoveException("Фигура не может сюда пойти!");

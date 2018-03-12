@@ -33,7 +33,7 @@ public class Pawn extends Figure {
      */
     @Override
     public Cell[] way(Cell source, Cell dest) throws ImpossibleMoveException {
-        if (!Board.validCells(source, dest) || source.getX() != dest.getX() || Math.abs(source.getY() - dest.getY()) > MAXLENGTH) {
+        if (!new Board().validCells(source, dest) || source.getX() != dest.getX() || Math.abs(source.getY() - dest.getY()) > MAXLENGTH) {
             throw new ImpossibleMoveException("Фигура не может сюда пойти!");
         }
         return new Cell[]{source, dest};
