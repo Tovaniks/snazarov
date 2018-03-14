@@ -63,4 +63,9 @@ public class Person {
     public String getAddress() {
         return address;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s %s %s", getName(), getSurname(), getPhone(), getAddress());
+    }
 }
