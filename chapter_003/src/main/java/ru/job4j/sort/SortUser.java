@@ -5,13 +5,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-
 /**
- * AddItem
+ * SortUser
  *
  * @author Sergey Nazarov
  * @version $Id$
- * @since 2018.02.25
+ * @since 2018.03.16
  */
 public class SortUser {
 
