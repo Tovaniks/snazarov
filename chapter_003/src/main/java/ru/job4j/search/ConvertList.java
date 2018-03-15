@@ -46,4 +46,21 @@ public class ConvertList {
     }
 
 
+    /**
+     * Конвертируем лист массивов в один лист Integer
+     *
+     * @param list лист массивов
+     * @return новый список
+     */
+    public List<Integer> convert(List<int[]> list) {
+        List<Integer> result = new ArrayList<>();
+        for (int[] massive : list) {
+            for (int element : massive) {
+                result.add(element);
+            }
+        }
+        return result;
+    }
+
+
 }
