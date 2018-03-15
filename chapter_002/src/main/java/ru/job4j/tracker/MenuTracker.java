@@ -1,5 +1,8 @@
 package ru.job4j.tracker;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * MenuTracker
  *
@@ -12,8 +15,7 @@ public class MenuTracker {
     private final static String SEPARATOR = System.lineSeparator();
     private final Input input;
     private final Tracker tracker;
-    private int positions = 0;
-    private UserAction[] actions = new UserAction[7];
+    private List<UserAction> actions = new ArrayList<>();
 
     /**
      * Конструтор инициализирующий поля.
@@ -30,37 +32,22 @@ public class MenuTracker {
      * инициализируем меню
      */
     public void create() {
-        addMenuItem(this.new AddItem(this.positions, "Добавить заявку"));
-        addMenuItem(new MenuTracker.ShowItem(this.positions, "Показать все заявки"));
-        addMenuItem(new EditItem(this.positions, "Отредактировать заявку"));
-        addMenuItem(new DeleteItem(this.positions, "Удалить заявку"));
-        addMenuItem(new MenuTracker.FindByID(this.positions, "Найти заявку по ID"));
-        addMenuItem(new MenuTracker.FindByName(this.positions, "Найти заявку по названию"));
-        addMenuItem(this.new Exit(this.positions, "Выход"));
-    }
-
-    /**
-     * Добавляем пункты меню в меню
-     *
-     * @param action действие
-     */
-    private void addMenuItem(UserAction action) {
-        if (this.actions.length == this.positions) {
-            UserAction[] duplicate = new UserAction[this.actions.length * 2];
-            System.arraycopy(this.actions, 0, duplicate, 0, this.actions.length);
-            this.actions = duplicate;
-        }
-        this.actions[this.positions] = action;
-        this.positions++;
+        this.actions.add(this.new AddItem(this.actions.size(), "Добавить заявку"));
+        this.actions.add(new MenuTracker.ShowItem(this.actions.size(), "Показать все заявки"));
+        this.actions.add(new EditItem(this.actions.size(), "Отредактировать заявку"));
+        this.actions.add(new DeleteItem(this.actions.size(), "Удалить заявку"));
+        this.actions.add(new MenuTracker.FindByID(this.actions.size(), "Найти заявку по ID"));
+        this.actions.add(new MenuTracker.FindByName(this.actions.size(), "Найти заявку по названию"));
+        this.actions.add(this.new Exit(this.actions.size(), "Выход"));
     }
 
     /**
      * Выводим меню
      */
     public void showMenu() {
-        System.out.println("------------ Меню: ------------" + this.SEPARATOR);
-        for (int index = 0; index < this.positions; index++) {
-            System.out.println(this.actions[index].info());
+        System.out.println("------------ Меню: ------------" + SEPARATOR);
+        for (UserAction action : this.actions) {
+            System.out.println(action.info());
         }
     }
 
@@ -71,16 +58,16 @@ public class MenuTracker {
      */
     public boolean choose() {
         boolean result = false;
-        int[] range = new int[positions];
-        for (int i = 0; i < positions; i++) {
+        int[] range = new int[this.actions.size()];
+        for (int i = 0; i < this.actions.size(); i++) {
             range[i] = i;
         }
         int index = this.input.ask("Select:", range);
-        if (this.actions[index].info().equals(String.format("%s. %s", positions - 1, "Выход"))) {
+        if (this.actions.get(index).info().equals(String.format("%s. %s", this.actions.size() - 1, "Выход"))) {
             result = true;
         } else {
-            actions[index].execute(this.input, this.tracker);
-            System.out.println(this.SEPARATOR + this.SEPARATOR + this.SEPARATOR);
+            actions.get(index).execute(this.input, this.tracker);
+            System.out.println(SEPARATOR + SEPARATOR + SEPARATOR);
         }
         return result;
     }
@@ -148,7 +135,6 @@ public class MenuTracker {
          */
         @Override
         public void execute(Input input, Tracker tracker) {
-
         }
     }
 

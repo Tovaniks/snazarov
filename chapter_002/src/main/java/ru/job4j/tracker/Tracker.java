@@ -1,5 +1,7 @@
 package ru.job4j.tracker;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -11,8 +13,7 @@ import java.util.Random;
  */
 
 public class Tracker {
-    private Item[] items = new Item[100];
-    private int position = 0;
+    private List<Item> items = new ArrayList<>();
     private static final Random RANDOM = new Random();
 
 
@@ -23,13 +24,8 @@ public class Tracker {
      * @return добавленное значение.
      */
     public Item add(Item item) {
-        if (this.position == this.items.length) {
-            Item[] array = new Item[this.items.length * 2];
-            System.arraycopy(this.items, 0, array, 0, this.items.length);
-            this.items = array;
-        }
+        items.add(item);
         item.setID(generateID());
-        this.items[this.position++] = item;
         return item;
     }
 
@@ -41,9 +37,9 @@ public class Tracker {
      * @param item таска
      */
     public void replace(String id, Item item) {
-        for (int index = 0; index < this.position; index++) {
-            if (this.items[index].getID().equals(id)) {
-                this.items[index] = item;
+        for (int index = 0; index < this.items.size(); index++) {
+            if (this.items.get(index).getID().equals(id)) {
+                this.items.set(index, item);
                 break;
             }
         }
@@ -56,10 +52,9 @@ public class Tracker {
      * @param id уникальное ID
      */
     public void delete(String id) {
-        for (int index = 0; index < position; index++) {
-            if (this.items[index].getID().equals(id)) {
-                System.arraycopy(this.items, index + 1, this.items, index, this.position - index - 1);
-                this.position--;
+        for (int index = 0; index < this.items.size(); index++) {
+            if (this.items.get(index).getID().equals(id)) {
+                this.items.remove(index);
                 break;
             }
         }
@@ -72,8 +67,8 @@ public class Tracker {
      * @return список тасок.
      */
     public Item[] findAll() {
-        Item[] result = new Item[this.position];
-        System.arraycopy(this.items, 0, result, 0, this.position);
+        Item[] result = new Item[items.size()];
+        System.arraycopy(this.items.toArray(), 0, result, 0, items.size());
         return result;
     }
 
@@ -85,9 +80,9 @@ public class Tracker {
      */
     public Item[] findByName(String key) {
         Tracker result = new Tracker();
-        for (int index = 0; index < this.position; index++) {
-            if (this.items[index].getName().equals(key)) {
-                result.add(this.items[index]);
+        for (Item item : this.items) {
+            if (item.getName().equals(key)) {
+                result.add(item);
             }
         }
         return result.findAll();
@@ -101,9 +96,9 @@ public class Tracker {
      */
     public Item findByID(String id) {
         Item result = null;
-        for (int index = 0; index < this.position; index++) {
-            if (this.items[index].getID().equals(id)) {
-                result = items[index];
+        for (Item item : this.items) {
+            if (item.getID().equals(id)) {
+                result = item;
                 break;
             }
         }
