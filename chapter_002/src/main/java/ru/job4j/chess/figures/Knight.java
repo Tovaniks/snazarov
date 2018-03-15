@@ -34,7 +34,7 @@ public class Knight extends Figure {
 
         Cell[] result = new Cell[4];
         Cell[] subResult;
-        if (!new Board().validCells(source, dest) || !(moveLikeHorse(source, dest))) {
+        if (!source.valid() || !dest.valid() || !(moveLikeHorse(source, dest))) {
             throw new ImpossibleMoveException("Фигура не может сюда пойти!");
         } else {
             if (Math.abs(source.getX() - dest.getX()) == 3) {

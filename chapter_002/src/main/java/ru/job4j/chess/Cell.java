@@ -40,4 +40,17 @@ public class Cell {
     public int getY() {
         return y;
     }
+
+    /**
+     * Проверяем, попадают ли координаты точки на доску
+     *
+     * @return true/false.
+     */
+    public boolean valid() {
+        boolean result = true;
+        if (getX() < 0 || getX() > Board.ROW - 1 || getY() < 0 || getY() > Board.COLUMN - 1) {
+            result = false;
+        }
+        return result;
+    }
 }

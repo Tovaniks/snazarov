@@ -15,41 +15,10 @@ import ru.job4j.chess.figures.Knight;
  */
 public class Board {
 
-    private static final int ROW = 8;
-    private static final int COLUMN = 8;
+    public static final int ROW = 8;
+    public static final int COLUMN = 8;
     private Figure[] figures = new Figure[32];
     private int position = 0;
-
-    /**
-     * Валидация клетки
-     *
-     * @param cell клетка
-     * @return возвращает true/false на существование клетки.
-     */
-    private boolean validCell(Cell cell) {
-        boolean result = true;
-        if (cell.getX() < 0 || cell.getX() > ROW - 1 || cell.getY() < 0 || cell.getY() > COLUMN - 1) {
-            result = false;
-        }
-        return result;
-
-    }
-
-    /**
-     * Валидация начальной и конечной клетки клетки
-     *
-     * @param source начало
-     * @param dest конец
-     * @return возвращает true/false на существование клеток.
-     */
-    public boolean validCells(Cell source, Cell dest) {
-        boolean result = true;
-        if (!(validCell(source) && validCell(dest))) {
-            result = false;
-        }
-        return result;
-
-    }
 
     /**
      * Добавляем фигуру в массив

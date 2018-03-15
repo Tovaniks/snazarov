@@ -33,7 +33,7 @@ public class King extends Figure {
      */
     @Override
     public Cell[] way(Cell source, Cell dest) throws ImpossibleMoveException {
-        if (!new Board().validCells(source, dest) || !(Rook.moveLikeRook(source, dest) || Bishop.moveLikeBishop(source, dest))
+        if (!source.valid() || !dest.valid() || !(Rook.moveLikeRook(source, dest) || Bishop.moveLikeBishop(source, dest))
                 || Math.abs(source.getX() - dest.getX()) > length || Math.abs(source.getY() - dest.getY()) > length) {
             throw new ImpossibleMoveException("Фигура не может сюда пойти!");
         }
