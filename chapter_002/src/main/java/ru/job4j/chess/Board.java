@@ -20,6 +20,7 @@ public class Board {
     private Figure[] figures = new Figure[32];
     private int position = 0;
 
+
     /**
      * Добавляем фигуру в массив
      *
@@ -33,14 +34,14 @@ public class Board {
      * Двигаем фигуру. Возвращаем результат действия.
      *
      * @param source начало
-     * @param dest конец
+     * @param dest   конец
      * @return true/false передвижения фигуры.
      */
     public boolean move(Cell source, Cell dest) throws ImpossibleMoveException, OccupiedWayException, FigureNotFoundException {
         int id = getFigureID(source);
         Figure figure = figures[id];
         Cell[] way = figure.way(source, dest);
-        if (!pathIsEmpty(way) && !(figures[id] instanceof Knight)) {
+        if (!pathIsEmpty(way) && figures[id].isCleanWay()) {
             throw new OccupiedWayException("Путь занят фигурами!");
         }
         figures[id] = figure.copy(dest);
@@ -51,7 +52,7 @@ public class Board {
      * Валидированный метод передвижения фигуры
      *
      * @param source начало
-     * @param dest конец
+     * @param dest   конец
      * @return true/false передвижения фигуры.
      */
     public boolean validMove(Cell source, Cell dest) {
@@ -77,7 +78,7 @@ public class Board {
     private int getFigureID(Cell source) throws FigureNotFoundException {
         int result = -1;
         for (int index = 0; index < figures.length; index++) {
-            if (figures[index] != null && figures[index].position.getX() == source.getX() && figures[index].position.getY() == source.getY()) {
+            if (figures[index] != null && figures[index].isOccupaid(source)) {
                 result = index;
                 break;
             }
@@ -101,7 +102,7 @@ public class Board {
         } else {
             for (int index = 1; index < cells.length; index++) {
                 for (Figure figure : figures) {
-                    if (figure != null && figure.position.getX() == cells[index].getX() && figure.position.getY() == cells[index].getY()) {
+                    if (figure != null && figure.isOccupaid(cells[index])) {
                         result = false;
                         break;
                     }

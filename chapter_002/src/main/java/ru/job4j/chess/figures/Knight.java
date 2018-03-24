@@ -70,4 +70,8 @@ public class Knight extends Figure {
         return Math.abs(source.getX() - dest.getX()) == 1 && Math.abs(source.getY() - dest.getY()) == 2
                 || Math.abs(source.getX() - dest.getX()) == 2 && Math.abs(source.getY() - dest.getY()) == 1;
     }
+
+    public boolean isCleanWay() {
+        return false;
+    }
 }

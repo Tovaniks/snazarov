@@ -75,15 +75,14 @@ public abstract class Figure {
     }
 
     int getCoefficient(int first, int second) {
-        int result;
-        if (first == second) {
-            result = 0;
-        } else if (first > second) {
-            result = -1;
-        } else {
-            result = 1;
-        }
-        return result;
+        return Integer.compare(second, first);
     }
 
+    public boolean isOccupaid(Cell dest) {
+        return position.getX() == dest.getX() && position.getY() == dest.getY();
+    }
+
+    public boolean isCleanWay() {
+        return true;
+    }
 }
