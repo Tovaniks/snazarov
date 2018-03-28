@@ -12,7 +12,7 @@ import java.util.TreeSet;
  * @since 2018.03.28
  */
 public class Departments {
-    public Set<String> departments = new TreeSet<>();
+    private Set<String> departments = new TreeSet<>();
 
     /**
      * Добавляем департамент
@@ -76,7 +76,7 @@ public class Departments {
                         break;
                     }
                 }
-                return res == 0 ? ((Integer) firstWord.length).compareTo(secondWord.length) : res;
+                return res == 0 ? Integer.compare(firstWord.length, secondWord.length) : res;
             }
         });
         res.addAll(departments);
