@@ -3,15 +3,15 @@ package ru.job4j.iterator;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-
 /**
- * Class EvenNumbersIterator.
+ * Class PrimeIterator.
  *
  * @author Sergey Nazarov
  * @version $Id$
  * @since 2018.04.03
  */
-public class EvenNumbersIterator implements Iterator<Integer> {
+public class PrimeIterator implements Iterator<Integer> {
+
     private int[] numbers;
     int position = 0;
 
@@ -20,12 +20,12 @@ public class EvenNumbersIterator implements Iterator<Integer> {
      *
      * @param ints массив элементов.
      */
-    public EvenNumbersIterator(int[] ints) {
+    public PrimeIterator(int[] ints) {
         this.numbers = ints;
     }
 
     /**
-     * Проверяем, есть ли впереди четные элементы
+     * Проверяем, есть ли впереди простые числа
      *
      * @return true/false
      */
@@ -33,7 +33,7 @@ public class EvenNumbersIterator implements Iterator<Integer> {
     public boolean hasNext() {
         boolean result = false;
         for (int index = position; index < numbers.length; index++) {
-            if (numbers[index] % 2 == 0) {
+            if (isPrime(numbers[index])) {
                 result = true;
                 break;
             }
@@ -42,22 +42,43 @@ public class EvenNumbersIterator implements Iterator<Integer> {
     }
 
     /**
-     * Ищем следующий четный элемент
+     * Ищем следующее в списке простое число
      *
-     * @return четный элемент
+     * @return простое число
      */
     @Override
     public Integer next() {
-        int result = -1;
+        Integer result = null;
         while (position < numbers.length) {
-            if (numbers[position] % 2 == 0) {
+            if (isPrime(numbers[position])) {
                 result = numbers[position++];
                 break;
             }
             position++;
         }
-        if (result == -1) {
+        if (result == null) {
             throw new NoSuchElementException();
+        }
+        return result;
+    }
+
+    /**
+     * Проверяем является ли число простым
+     *
+     * @param number число
+     * @return true/false
+     */
+    private boolean isPrime(Integer number) {
+        boolean result = true;
+        if (number == 1) {
+            result = false;
+        } else {
+            for (int index = 2; index < number; index++) {
+                if (number % index == 0) {
+                    result = false;
+                    break;
+                }
+            }
         }
         return result;
     }
