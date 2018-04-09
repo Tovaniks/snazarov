@@ -10,6 +10,7 @@ public class LinkedArray<E> implements Iterable<E> {
     private Node<E> last = null;
     private int modCount = 0;
     private int size = 0;
+
     /**
      * Добавляем значение
      *
@@ -40,6 +41,44 @@ public class LinkedArray<E> implements Iterable<E> {
             current = current.next;
         }
         return current.item;
+    }
+
+    /**
+     * Удаляем первый элемент и возвращаем его значение
+     *
+     * @return значение первого элемента
+     */
+    public E removeFirst() {
+        E result = first.item;
+        if (first.next != null) {
+            first = first.next;
+            first.prev = null;
+        } else {
+            first = null;
+            last = null;
+        }
+        size--;
+        modCount++;
+        return result;
+    }
+
+    /**
+     * Удаляем последний элемент и возращаем его значение
+     *
+     * @return значение последнего элемента
+     */
+    public E removeLast() {
+        E result = last.item;
+        if (last.prev != null) {
+            last = last.prev;
+            last.next = null;
+        } else {
+            first = null;
+            last = null;
+        }
+        size--;
+        modCount++;
+        return result;
     }
 
 

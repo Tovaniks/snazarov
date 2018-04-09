@@ -56,6 +56,4 @@ public class LinkedArrayTest {
         list.add("Привет");
         iterator.next();
     }
-
-
 }
