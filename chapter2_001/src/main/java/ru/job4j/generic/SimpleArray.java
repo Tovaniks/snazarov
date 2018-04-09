@@ -14,7 +14,6 @@ import java.util.NoSuchElementException;
 public class SimpleArray<T> implements Iterable<T> {
 
     private T[] array = (T[]) new Object[10];
-    private int capacity = 10;
     private int position = 0;
 
 
@@ -24,9 +23,8 @@ public class SimpleArray<T> implements Iterable<T> {
      * @param model элемент
      */
     public void add(T model) {
-        if (position == capacity) {
-            capacity *= 2;
-            T[] dest = (T[]) new Object[capacity];
+        if (position == array.length) {
+            T[] dest = (T[]) new Object[array.length * 2];
             System.arraycopy(array, 0, dest, 0, array.length);
             array = dest;
         }
