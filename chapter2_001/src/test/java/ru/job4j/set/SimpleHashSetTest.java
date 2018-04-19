@@ -10,10 +10,10 @@ public class SimpleHashSetTest {
     @Test
     public void whenAddMoreThenSixteenElements() {
         SimpleHashSet<Integer> array = new SimpleHashSet<>();
-        for (int index = 0; index <= 20; index++) {
+        for (int index = 0; index <= 16; index++) {
             array.add(index);
         }
-        for (int index = 0; index <= 20; index++) {
+        for (int index = 0; index <= 16; index++) {
             assertThat(array.contains(index), is(true));
         }
     }

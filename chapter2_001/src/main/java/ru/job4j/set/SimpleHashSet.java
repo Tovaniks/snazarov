@@ -9,8 +9,9 @@ package ru.job4j.set;
  */
 public class SimpleHashSet<E> {
 
-    private Node<E>[] elements = new Node[16];
-    private int position = 0;
+    private int count = 0;
+    private int size = 16;
+    private Node<E>[] elements = (Node<E>[]) new Node[size];
 
 
     /**
@@ -20,14 +21,13 @@ public class SimpleHashSet<E> {
      * @return true/false
      */
     public boolean add(E value) {
-        boolean success = !contains(value);
-        if (position == elements.length) {
-            Node<E>[] newElements = new Node[position * 2];
-            System.arraycopy(elements, 0, newElements, 0, elements.length);
-            elements = newElements;
+        if (this.count == elements.length) {
+            resize();
         }
+        boolean success = !contains(value);
         if (success) {
-            elements[position++] = new Node<>(value);
+            elements[indexFor(value)] = new Node<>(value);
+            count++;
         }
         return success;
     }
@@ -40,7 +40,11 @@ public class SimpleHashSet<E> {
      * @return true/false присутствия элемента.
      */
     public boolean contains(E value) {
-        return getPosition(value) != null;
+        boolean success = false;
+        if (elements[indexFor(value)] != null && elements[indexFor(value)].value.equals(value)) {
+            success = true;
+        }
+        return success;
     }
 
 
@@ -51,32 +55,14 @@ public class SimpleHashSet<E> {
      * @return true/false успешности операции
      */
     public boolean remove(E value) {
-        int index;
+        int index = indexFor(value);
         boolean success = false;
-        if (getPosition(value) != null) {
+        if (elements[index] != null) {
             success = true;
-            index = getPosition(value);
             System.arraycopy(this.elements, index + 1, this.elements, index, this.elements.length - index - 1);
-            position--;
+            this.count--;
         }
         return success;
-    }
-
-    /**
-     * Возвращаем позицию элемента в списке
-     *
-     * @param value элемент
-     * @return позиция
-     */
-    private Integer getPosition(E value) {
-        Integer result = null;
-        for (int index = 0; index < position; index++) {
-            if (value.hashCode() == elements[index].hash && value.equals(elements[index].value)) {
-                result = index;
-                break;
-            }
-        }
-        return result;
     }
 
     /**
@@ -92,9 +78,41 @@ public class SimpleHashSet<E> {
          * @param value элемент.
          */
         Node(E value) {
-            this.hash = value.hashCode();
+            this.hash = hash(value);
             this.value = value;
         }
+    }
+
+    /**
+     * Хэш-функция
+     *
+     * @param value значение
+     * @return хэш
+     */
+    private int hash(Object value) {
+        int h = value.hashCode();
+        return (value == null) ? 0 : h ^ (h >>> 16);
+    }
+
+
+    /**
+     * Ищем место в массиве
+     *
+     * @param value значение
+     * @return место в массиве
+     */
+    private int indexFor(E value) {
+        return hash(value) & (elements.length - 1);
+    }
+
+    /**
+     * Увеличиваем массив вдвое
+     */
+    private void resize() {
+        size *= 2;
+        Node<E>[] newElements = (Node<E>[]) new Node[size];
+        System.arraycopy(elements, 0, newElements, 0, elements.length);
+        elements = newElements;
     }
 
 
