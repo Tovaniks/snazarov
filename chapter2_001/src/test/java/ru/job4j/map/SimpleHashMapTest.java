@@ -25,19 +25,19 @@ public class SimpleHashMapTest {
 
     @Test(expected = NoSuchElementException.class)
     public void whenAddElementThenGetElements() {
-        SimpleHashMap<String, Integer> map = new SimpleHashMap<>();
-        String first = "first";
-        String second = "second";
-        String third = "third";
+        SimpleHashMap<Integer, Integer> map = new SimpleHashMap<>();
+        Integer first = 1;
+        Integer second = 3;
+        Integer third = 2;
         map.insert(first, 1);
         map.insert(second, 2);
         map.insert(third, 3);
         Iterator iterator = map.iterator();
         assertThat(iterator.next(), is(first));
         assertThat(iterator.hasNext(), is(true));
-        assertThat(iterator.next(), is(second));
-        assertThat(iterator.hasNext(), is(true));
         assertThat(iterator.next(), is(third));
+        assertThat(iterator.hasNext(), is(true));
+        assertThat(iterator.next(), is(second));
         assertThat(iterator.hasNext(), is(false));
         iterator.next();
     }
@@ -59,11 +59,11 @@ public class SimpleHashMapTest {
     @Test(expected = NoSuchElementException.class)
     public void whenAddManyElementsThenResize() {
         SimpleHashMap<Integer, Integer> map = new SimpleHashMap<>();
-        for (int index = 0; index < 1000; index++) {
+        for (int index = 0; index < 17; index++) {
             assertThat(map.insert(index, index), is(true));
         }
         Iterator iterator = map.iterator();
-        for (int index = 0; index < 1000; index++) {
+        for (int index = 0; index < 17; index++) {
             assertThat(iterator.next(), is(index));
         }
         assertThat(iterator.hasNext(), is(false));
@@ -73,15 +73,15 @@ public class SimpleHashMapTest {
 
     @Test(expected = NoSuchElementException.class)
     public void whenDeleteElementThenChange() {
-        SimpleHashMap<String, Integer> map = new SimpleHashMap<>();
-        String first = "first";
-        String second = "second";
-        String third = "third";
+        SimpleHashMap<Integer, Integer> map = new SimpleHashMap<>();
+        Integer first = 1;
+        Integer second = 2;
+        Integer third = 3;
         map.insert(first, 1);
         map.insert(second, 2);
         map.insert(third, 3);
         assertThat(map.delete(second), is(true));
-        assertThat(map.delete("four"), is(false));
+        assertThat(map.delete(4), is(false));
         Iterator iterator = map.iterator();
         assertThat(iterator.next(), is(first));
         assertThat(iterator.hasNext(), is(true));
