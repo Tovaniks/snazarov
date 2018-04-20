@@ -135,7 +135,6 @@ public class Tree<E extends Comparable<E>> implements SimpleTree<E>, Iterable<E>
      */
     public boolean isBinary() {
         boolean result = true;
-        Optional<Node<E>> rsl = Optional.empty();
         Queue<Node<E>> data = new LinkedList<>();
         data.offer(this.root);
         while (!data.isEmpty()) {
