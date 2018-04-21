@@ -64,7 +64,7 @@ public class SimpleHashMap<K, V> implements Iterable<K> {
         boolean success = false;
         int pos = indexFor(key);
         if (elements[pos] != null) {
-            System.arraycopy(this.elements, pos + 1, this.elements, pos, size - pos - 1);
+            elements[pos] = null;
             count--;
             modCount++;
             success = true;
@@ -118,8 +118,6 @@ public class SimpleHashMap<K, V> implements Iterable<K> {
                 }
             }
         });
-
-
     }
 
 
@@ -128,8 +126,12 @@ public class SimpleHashMap<K, V> implements Iterable<K> {
      */
     private void resize() {
         Node<K, V>[] newElements = (Node<K, V>[]) new Node[size * 2];
-        System.arraycopy(this.elements, 0, newElements, 0, size);
         size *= 2;
+        for (Node<K, V> element : elements) {
+            if (element != null) {
+                newElements[indexFor(element.key)] = element;
+            }
+        }
         elements = newElements;
     }
 
@@ -179,6 +181,6 @@ public class SimpleHashMap<K, V> implements Iterable<K> {
      * @return индекс
      */
     private int indexFor(K key) {
-        return hash(key) & (elements.length - 1);
+        return hash(key) & (this.size - 1);
     }
 }
