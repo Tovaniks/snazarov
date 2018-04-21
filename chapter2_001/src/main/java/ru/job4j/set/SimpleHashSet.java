@@ -59,7 +59,7 @@ public class SimpleHashSet<E> {
         boolean success = false;
         if (elements[index] != null) {
             success = true;
-            System.arraycopy(this.elements, index + 1, this.elements, index, this.elements.length - index - 1);
+            elements[index] = null;
             this.count--;
         }
         return success;
@@ -102,7 +102,7 @@ public class SimpleHashSet<E> {
      * @return место в массиве
      */
     private int indexFor(E value) {
-        return hash(value) & (elements.length - 1);
+        return hash(value) & (size - 1);
     }
 
     /**
@@ -111,7 +111,11 @@ public class SimpleHashSet<E> {
     private void resize() {
         size *= 2;
         Node<E>[] newElements = (Node<E>[]) new Node[size];
-        System.arraycopy(elements, 0, newElements, 0, elements.length);
+        for (Node<E> element : elements) {
+            if (element != null) {
+                newElements[indexFor(element.value)] = element;
+            }
+        }
         elements = newElements;
     }
 
