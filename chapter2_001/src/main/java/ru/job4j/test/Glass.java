@@ -6,7 +6,7 @@ import java.util.TreeSet;
 
 
 /**
- * Class Traid.
+ * Class Glass.
  *
  * @author Sergey Nazarov
  * @version $Id$
