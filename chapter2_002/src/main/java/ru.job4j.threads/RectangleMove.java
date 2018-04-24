@@ -13,11 +13,12 @@ public class RectangleMove implements Runnable {
     private final Rectangle rect;
     private int limitX;
     private int step = 1;
+    private boolean stop = false;
 
     /**
      * Конструктор
      *
-     * @param rect фигура
+     * @param rect   фигура
      * @param limitX граница по оси X
      */
     public RectangleMove(Rectangle rect, int limitX) {
@@ -26,12 +27,19 @@ public class RectangleMove implements Runnable {
     }
 
     /**
+     * Останавливает процесс движения
+     */
+    public void stop() {
+        this.stop = true;
+    }
+
+    /**
      * Переопределенный метод Run.
      * Задаем движение фигуры на площади.
      */
     @Override
     public void run() {
-        while (true) {
+        while (!stop) {
             if (rect.getX() == limitX || rect.getX() == 0) {
                 step *= -1;
             }
