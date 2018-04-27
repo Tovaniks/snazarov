@@ -33,9 +33,6 @@ public class SimpleHashMap<K, V> implements Iterable<K> {
         int pos = indexFor(key);
         if (elements[pos] == null) {
             elements[pos] = new Node(key, value);
-            if (size < (hash(key) & (elements.length - 1))) {
-                size = hash(key) & (elements.length - 1);
-            }
             modCount++;
             count++;
             success = true;
