@@ -89,4 +89,26 @@ public class SimpleHashMapTest {
         assertThat(iterator.hasNext(), is(false));
         iterator.next();
     }
+
+    @Test(expected = NoSuchElementException.class)
+    public void whenUseNextMoreThenElementsThenException() {
+        SimpleHashMap<String, Integer> map = new SimpleHashMap<>();
+        map.insert(null, 1);
+        map.insert("ghb", 1);
+        map.insert("113", 1);
+        map.insert("fdf", 1);
+        map.insert("113", 1);
+        Iterator iterator = map.iterator();
+        assertThat(iterator.hasNext(), is(true));
+        iterator.next();
+        assertThat(iterator.hasNext(), is(true));
+        iterator.next();
+        assertThat(iterator.hasNext(), is(true));
+        iterator.next();
+        assertThat(iterator.hasNext(), is(true));
+        iterator.next();
+        assertThat(iterator.hasNext(), is(false));
+        iterator.next();
+
+    }
 }

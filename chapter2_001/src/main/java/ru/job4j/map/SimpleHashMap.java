@@ -166,8 +166,7 @@ public class SimpleHashMap<K, V> implements Iterable<K> {
      * @return хэш
      */
     private int hash(Object key) {
-        int h = key.hashCode();
-        return (key == null) ? 0 : h ^ (h >>> 16);
+        return (key == null) ? 0 : key.hashCode() ^ (key.hashCode() >>> 16);
     }
 
 
@@ -178,6 +177,6 @@ public class SimpleHashMap<K, V> implements Iterable<K> {
      * @return индекс
      */
     private int indexFor(K key) {
-        return hash(key) & (this.size - 1);
+        return key == null ? 0 : hash(key) & (this.size - 1);
     }
 }
