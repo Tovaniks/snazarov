@@ -94,23 +94,21 @@ public class SimpleHashMap<K, V> implements Iterable<K> {
                 if (innerModCount != modCount) {
                     throw new ConcurrentModificationException();
                 }
+                if (innerPosition >= size) {
+                    throw new NoSuchElementException();
+                }
                 if (next == null && innerPosition == 0) {
                     innerPositionRun();
                     next = elements[innerPosition++].key;
                 }
                 result = next;
-                next = null;
                 innerPositionRun();
-                if (innerPosition >= size) {
-                    throw new NoSuchElementException();
-                } else {
-                    next = elements[innerPosition++].key;
-                }
+                next = innerPosition < size ? elements[innerPosition++].key : null;
                 return result;
             }
 
             private void innerPositionRun() {
-                while (hasNext() && elements[innerPosition] == null) {
+                while (innerPosition < size && elements[innerPosition] == null) {
                     innerPosition++;
                 }
             }
