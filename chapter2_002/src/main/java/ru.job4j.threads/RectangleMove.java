@@ -13,7 +13,6 @@ public class RectangleMove implements Runnable {
     private final Rectangle rect;
     private int limitX;
     private int step = 1;
-    private boolean stop = false;
 
     /**
      * Конструктор
@@ -27,19 +26,12 @@ public class RectangleMove implements Runnable {
     }
 
     /**
-     * Останавливает процесс движения
-     */
-    public void stop() {
-        this.stop = true;
-    }
-
-    /**
      * Переопределенный метод Run.
      * Задаем движение фигуры на площади.
      */
     @Override
     public void run() {
-        while (!stop) {
+        while (!Thread.currentThread().isInterrupted()) {
             if (rect.getX() == limitX || rect.getX() == 0) {
                 step *= -1;
             }
@@ -48,6 +40,7 @@ public class RectangleMove implements Runnable {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                Thread.currentThread().interrupt();
             }
         }
     }
