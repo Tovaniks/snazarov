@@ -91,12 +91,7 @@ public class SimpleHashMap<K, V> implements Iterable<K> {
             @Override
             public K next() {
                 K result;
-                if (innerModCount != modCount) {
-                    throw new ConcurrentModificationException();
-                }
-                if (innerPosition >= size) {
-                    throw new NoSuchElementException();
-                }
+                checkException();
                 if (next == null && innerPosition == 0) {
                     innerPositionRun();
                     next = elements[innerPosition++].key;
@@ -105,6 +100,15 @@ public class SimpleHashMap<K, V> implements Iterable<K> {
                 innerPositionRun();
                 next = innerPosition < size ? elements[innerPosition++].key : null;
                 return result;
+            }
+
+            private void checkException() {
+                if (innerModCount != modCount) {
+                    throw new ConcurrentModificationException();
+                }
+                if (next == null && innerPosition != 0) {
+                    throw new NoSuchElementException();
+                }
             }
 
             private void innerPositionRun() {
