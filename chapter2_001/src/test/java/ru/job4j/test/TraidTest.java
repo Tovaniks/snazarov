@@ -52,6 +52,13 @@ public class TraidTest {
     }
 
     @Test
+    public void whenAddMirrorTaskThenTrue() {
+        Traid traid = new Traid();
+        assertThat(traid.add(new Task("1", "gazprom", new Add(), new Bid(), 10d, 5)), is(true));
+        assertThat(traid.add(new Task("1", "gazprom", new Add(), new Ask(), 10d, 5)), is(true));
+    }
+
+    @Test
     public void whenAddSamePriceThenVolumeAdded() {
         Traid traid = new Traid();
         assertThat(traid.add(new Task("1", "gazprom", new Add(), new Ask(), 10d, 5)), is(true));
