@@ -1,7 +1,5 @@
 package ru.job4j.test;
 
-import ru.job4j.test.action.Action;
-import ru.job4j.test.type.Type;
 
 
 /**

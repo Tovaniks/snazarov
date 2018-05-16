@@ -1,8 +1,6 @@
 package ru.job4j.test;
 
-import ru.job4j.test.action.Ask;
-import ru.job4j.test.action.Bid;
-import ru.job4j.test.type.Delete;
+
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -19,7 +17,7 @@ import java.util.TreeSet;
  */
 public class Glass {
 
-    private Map<String, TreeSet<Task>> traiding = new HashMap<>();
+    private Map<Action, TreeSet<Task>> traiding = new HashMap<>();
 
     /**
      * Конструктор стакана. Добавляем таску
@@ -28,15 +26,15 @@ public class Glass {
      */
     public Glass(Task task) {
         init();
-        traiding.get(task.getAction().action()).add(task);
+        traiding.get(task.getAction()).add(task);
     }
 
     /**
      * Инициализация карты продажы/покупки
      */
     private void init() {
-        traiding.put(new Bid().action(), new TreeSet<>());
-        traiding.put(new Ask().action(), new TreeSet<>());
+        traiding.put(Action.BID, new TreeSet<>());
+        traiding.put(Action.ASK, new TreeSet<>());
     }
 
     /**
@@ -46,7 +44,7 @@ public class Glass {
      * @return true/false успешности добавления
      */
     public boolean insert(Task task) {
-        return new Delete().type().equals(task.getType().type()) ? removeTask(task, traiding.get(task.getAction().action())) : addTask(task);
+        return Type.DELETE == task.getType() ? removeTask(task, traiding.get(task.getAction())) : addTask(task);
     }
 
     /**
@@ -59,14 +57,14 @@ public class Glass {
         boolean changed;
         boolean added = false;
         Integer before = task.getVolume();
-        if (new Ask().action().equals(task.getAction().action())) {
+        if (Action.ASK == task.getAction()) {
             sell(task);
         } else {
             buy(task);
         }
         changed = !before.equals(task.getVolume());
         if (task.getVolume() > 0) {
-            added = traiding.get(task.getAction().action()).add(task);
+            added = traiding.get(task.getAction()).add(task);
         }
         return added || changed;
     }
@@ -77,7 +75,7 @@ public class Glass {
      * @param task заявка
      */
     private void buy(Task task) {
-        TreeSet<Task> sell = traiding.get(new Ask().action());
+        TreeSet<Task> sell = traiding.get(Action.ASK);
         while (!sell.isEmpty() && sell.last().getPrice() <= task.getPrice() && task.getVolume() > 0) {
             if (sell.last().getVolume() < task.getVolume()) {
                 task.setVolume(task.getVolume() - sell.last().getVolume());
@@ -96,7 +94,7 @@ public class Glass {
      * @param task заявка
      */
     private void sell(Task task) {
-        TreeSet<Task> buy = traiding.get(new Bid().action());
+        TreeSet<Task> buy = traiding.get(Action.BID);
         while (!buy.isEmpty() && buy.first().getPrice() >= task.getPrice() && task.getVolume() > 0) {
             if (buy.first().getVolume() < task.getVolume()) {
                 task.setVolume(task.getVolume() - buy.first().getVolume());
@@ -136,8 +134,8 @@ public class Glass {
      */
     @Override
     public String toString() {
-        TreeSet<Task> sell = traiding.get(new Ask().action());
-        TreeSet<Task> buy = traiding.get(new Bid().action());
+        TreeSet<Task> sell = traiding.get(Action.ASK);
+        TreeSet<Task> buy = traiding.get(Action.BID);
         StringBuilder result = new StringBuilder();
         StringBuilder sellTable = new StringBuilder();
         StringBuilder buyTable = new StringBuilder();

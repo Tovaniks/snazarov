@@ -3,10 +3,6 @@ package ru.job4j.test;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import ru.job4j.test.action.Ask;
-import ru.job4j.test.action.Bid;
-import ru.job4j.test.type.Add;
-import ru.job4j.test.type.Delete;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -32,8 +28,8 @@ public class TraidTest {
     @Test
     public void whenAddTwoTaskThenReturnTrue() {
         Traid traid = new Traid();
-        assertThat(traid.add(new Task("1", "gazprom", new Add(), new Bid(), 10d, 5)), is(true));
-        assertThat(traid.add(new Task("2", "gazprom", new Add(), new Bid(), 15d, 6)), is(true));
+        assertThat(traid.add(new Task("1", "gazprom", Type.ADD, Action.BID, 10d, 5)), is(true));
+        assertThat(traid.add(new Task("2", "gazprom", Type.ADD, Action.BID, 15d, 6)), is(true));
         traid.getGlass("gazprom");
         assertThat(this.mem.toString(),
                 is(String.format("Sell\tPrice\tBuy%s%s%s%s%s%s", System.getProperty("line.separator"),
@@ -43,26 +39,26 @@ public class TraidTest {
     @Test
     public void whenAddDuplicateByBookIDPriceTaskThenFalse() {
         Traid traid = new Traid();
-        assertThat(traid.add(new Task("1", "gazprom", new Add(), new Bid(), 10d, 5)), is(true));
-        assertThat(traid.add(new Task("1", "gazprom", new Add(), new Bid(), 15d, 6)), is(false));
-        assertThat(traid.add(new Task("2", "gazprom", new Add(), new Bid(), 10d, 5)), is(true));
-        assertThat(traid.add(new Task("1", "yandex", new Add(), new Bid(), 15d, 6)), is(true));
-        assertThat(traid.add(new Task("1", "yandex", new Delete(), new Bid(), 15d, 6)), is(true));
-        assertThat(traid.add(new Task("1", "yandex", new Delete(), new Bid(), 15d, 6)), is(false));
+        assertThat(traid.add(new Task("1", "gazprom", Type.ADD, Action.BID, 10d, 5)), is(true));
+        assertThat(traid.add(new Task("1", "gazprom", Type.ADD, Action.BID, 15d, 6)), is(false));
+        assertThat(traid.add(new Task("2", "gazprom", Type.ADD, Action.BID, 10d, 5)), is(true));
+        assertThat(traid.add(new Task("1", "yandex", Type.ADD, Action.BID, 15d, 6)), is(true));
+        assertThat(traid.add(new Task("1", "yandex", Type.DELETE, Action.BID, 15d, 6)), is(true));
+        assertThat(traid.add(new Task("1", "yandex", Type.DELETE, Action.BID, 15d, 6)), is(false));
     }
 
     @Test
     public void whenAddMirrorTaskThenTrue() {
         Traid traid = new Traid();
-        assertThat(traid.add(new Task("1", "gazprom", new Add(), new Bid(), 10d, 5)), is(true));
-        assertThat(traid.add(new Task("1", "gazprom", new Add(), new Ask(), 10d, 5)), is(true));
+        assertThat(traid.add(new Task("1", "gazprom", Type.ADD, Action.BID, 10d, 5)), is(true));
+        assertThat(traid.add(new Task("1", "gazprom", Type.ADD, Action.ASK, 10d, 5)), is(true));
     }
 
     @Test
     public void whenAddSamePriceThenVolumeAdded() {
         Traid traid = new Traid();
-        assertThat(traid.add(new Task("1", "gazprom", new Add(), new Ask(), 10d, 5)), is(true));
-        assertThat(traid.add(new Task("2", "gazprom", new Add(), new Ask(), 10d, 6)), is(true));
+        assertThat(traid.add(new Task("1", "gazprom", Type.ADD, Action.ASK, 10d, 5)), is(true));
+        assertThat(traid.add(new Task("2", "gazprom", Type.ADD, Action.ASK, 10d, 6)), is(true));
         traid.getGlass("gazprom");
         assertThat(this.mem.toString(),
                 is(String.format("Sell\tPrice\tBuy%s%s%s%s", System.getProperty("line.separator"),
@@ -73,9 +69,9 @@ public class TraidTest {
     @Test
     public void whenDeleteTaskThenDeleted() {
         Traid traid = new Traid();
-        assertThat(traid.add(new Task("1", "gazprom", new Add(), new Ask(), 10d, 5)), is(true));
-        assertThat(traid.add(new Task("2", "gazprom", new Add(), new Ask(), 10d, 6)), is(true));
-        assertThat(traid.add(new Task("2", "gazprom", new Delete(), new Ask(), 10d, 6)), is(true));
+        assertThat(traid.add(new Task("1", "gazprom", Type.ADD, Action.ASK, 10d, 5)), is(true));
+        assertThat(traid.add(new Task("2", "gazprom", Type.ADD, Action.ASK, 10d, 6)), is(true));
+        assertThat(traid.add(new Task("2", "gazprom", Type.DELETE, Action.ASK, 10d, 6)), is(true));
         traid.getGlass("gazprom");
         assertThat(this.mem.toString(),
                 is(String.format("Sell\tPrice\tBuy%s%s%s%s", System.getProperty("line.separator"),
@@ -86,9 +82,9 @@ public class TraidTest {
     @Test
     public void whenInsertAddAndDeleteTask() {
         Traid traid = new Traid();
-        traid.add(new Task("1", "gazprom", new Add(), new Bid(), 10d, 5));
-        traid.add(new Task("2", "gazprom", new Add(), new Bid(), 15d, 6));
-        traid.add(new Task("3", "gazprom", new Add(), new Ask(), 50d, 6));
+        traid.add(new Task("1", "gazprom", Type.ADD, Action.BID, 10d, 5));
+        traid.add(new Task("2", "gazprom", Type.ADD, Action.BID, 15d, 6));
+        traid.add(new Task("3", "gazprom", Type.ADD, Action.ASK, 50d, 6));
         traid.getGlass("gazprom");
         assertThat(this.mem.toString(),
                 is(String.format("Sell\tPrice\tBuy%s%s%s%s%s%s%s%s", System.getProperty("line.separator"),
