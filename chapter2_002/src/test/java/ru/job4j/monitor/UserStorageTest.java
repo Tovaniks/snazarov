@@ -155,7 +155,6 @@ public class UserStorageTest {
         traid1.start();
         traid1.join();
         traid2.join();
-        System.out.println(storage.toString());
         assertThat(firstBefore - first.getAmount(), is(second.getAmount() + third.getAmount() - before));
         assertThat(first.getAmount(), is(10));
     }

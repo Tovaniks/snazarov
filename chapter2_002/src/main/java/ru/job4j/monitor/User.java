@@ -9,8 +9,8 @@ package ru.job4j.monitor;
  * @since 2018.05.17
  */
 public class User {
-    private int id;
-    private String name;
+    private final int id;
+    private final String name;
     private int amount;
 
     /**
@@ -66,4 +66,24 @@ public class User {
     public String toString() {
         return String.format("ID - %s; Name = %s; Money = %d", this.id, this.name, this.amount);
     }
+
+    @Override
+    public boolean equals(Object object) {
+        boolean success = false;
+        if(object instanceof User) {
+            User user = (User) object;
+            success = this.id == user.getID() && this.name.equals(user.getName()) && this.amount == user.getAmount();
+        }
+        return success;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + name.hashCode();
+        result = 31 * result + id;
+        result = 31 * result + amount;
+        return result;
+    }
+
 }

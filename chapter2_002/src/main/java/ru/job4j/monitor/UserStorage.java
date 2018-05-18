@@ -27,12 +27,7 @@ public class UserStorage {
      * @return true/false
      */
     public synchronized boolean add(User user) {
-        boolean success = false;
-        if (!this.users.containsKey(user.getID())) {
-            this.users.put(user.getID(), user);
-            success = true;
-        }
-        return success;
+        return users.putIfAbsent(user.getID(), user) != null;
     }
 
     /**
@@ -42,12 +37,7 @@ public class UserStorage {
      * @return true/false
      */
     public synchronized boolean update(User user) {
-        boolean success = false;
-        if (this.users.containsKey(user.getID())) {
-            this.users.put(user.getID(), user);
-            success = true;
-        }
-        return success;
+        return users.replace(user.getID(),users.get(user.getID()),user);
 
     }
 
@@ -58,12 +48,7 @@ public class UserStorage {
      * @return true/false
      */
     public synchronized boolean delete(User user) {
-        boolean success = false;
-        if (this.users.containsKey(user.getID())) {
-            this.users.remove(user.getID());
-            success = true;
-        }
-        return success;
+        return this.users.remove(user.getID(),user);
 
     }
 
