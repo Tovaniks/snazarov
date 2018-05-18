@@ -56,4 +56,51 @@ public class LinkedArrayTest {
         list.add("Привет");
         iterator.next();
     }
+
+    @Test
+    public void whenDeleteAndRemoveTheSameTime() throws InterruptedException {
+        LinkedArray<Integer> linked = new LinkedArray<>();
+        for (int index = 0; index < 1000; index++) {
+            Add a1 = new Add(1, linked);
+            Add a2 = new Add(2, linked);
+            Add a3 = new Add(3, linked);
+            Add a4 = new Add(4, linked);
+            Add a5 = new Add(5, linked);
+            a1.start();
+            a2.start();
+            a3.start();
+            a4.start();
+            a5.start();
+            a1.join();
+            a2.join();
+            a3.join();
+            a4.join();
+            a5.join();
+            for (int i = 0; i < 5; i++) {
+                if (index % 2 == 0) {
+                    assertThat(linked.removeLast() == null, is(false));
+                } else {
+                    assertThat(linked.removeFirst() == null, is(false));
+                }
+            }
+        }
+
+
+    }
+
+    private class Add<E> extends Thread {
+
+        private E element;
+        private LinkedArray<E> linkedArray;
+
+        public Add(E element, LinkedArray<E> linkedArray) {
+            this.element = element;
+            this.linkedArray = linkedArray;
+        }
+
+        @Override
+        public void run() {
+            linkedArray.add(element);
+        }
+    }
 }

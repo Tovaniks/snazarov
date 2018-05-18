@@ -1,12 +1,15 @@
 package ru.job4j.list;
 
-import java.util.ConcurrentModificationException;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import net.jcip.annotations.GuardedBy;
+import net.jcip.annotations.ThreadSafe;
 
+import java.util.*;
+
+@ThreadSafe
 public class LinkedArray<E> implements Iterable<E> {
 
-    private Node<E> first = null;
+    private volatile Node<E> first = null;
+    @GuardedBy("this")
     private Node<E> last = null;
     private int modCount = 0;
     private int size = 0;
@@ -16,14 +19,14 @@ public class LinkedArray<E> implements Iterable<E> {
      *
      * @param value значение
      */
-    public void add(E value) {
-        Node<E> newNode = new Node<>(last, value, null);
-        if (first == null) {
-            first = newNode;
+    public synchronized void add(E value) {
+        Node<E> newNode = new Node<>(this.last, value, null);
+        if (this.first == null) {
+            this.first = newNode;
         } else {
-            last.next = newNode;
+            this.last.next = newNode;
         }
-        last = newNode;
+        this.last = newNode;
         modCount++;
         size++;
     }
@@ -35,7 +38,6 @@ public class LinkedArray<E> implements Iterable<E> {
      * @return значение
      */
     public E get(int index) {
-        E result = null;
         Node<E> current = first;
         for (int i = 0; i < index; i++) {
             current = current.next;
@@ -48,17 +50,17 @@ public class LinkedArray<E> implements Iterable<E> {
      *
      * @return значение первого элемента
      */
-    public E removeFirst() {
-        E result = first.item;
-        if (first.next != null) {
-            first = first.next;
-            first.prev = null;
+    public synchronized E removeFirst() {
+        E result = this.first.item;
+        if (this.first.next != null) {
+            this.first = this.first.next;
+            this.first.prev = null;
         } else {
-            first = null;
-            last = null;
+            this.first = null;
+            this.last = null;
         }
-        size--;
-        modCount++;
+        this.size--;
+        this.modCount++;
         return result;
     }
 
@@ -67,17 +69,17 @@ public class LinkedArray<E> implements Iterable<E> {
      *
      * @return значение последнего элемента
      */
-    public E removeLast() {
-        E result = last.item;
-        if (last.prev != null) {
-            last = last.prev;
-            last.next = null;
+    public synchronized E removeLast() {
+        E result = this.last.item;
+        if (this.last.prev != null) {
+            this.last = this.last.prev;
+            this.last.next = null;
         } else {
-            first = null;
-            last = null;
+            this.first = null;
+            this.last = null;
         }
-        size--;
-        modCount++;
+        this.size--;
+        this.modCount++;
         return result;
     }
 
@@ -107,15 +109,15 @@ public class LinkedArray<E> implements Iterable<E> {
              */
             @Override
             public E next() {
-                if (innerModCount != modCount) {
+                if (this.innerModCount != modCount) {
                     throw new ConcurrentModificationException();
                 }
                 if (!hasNext()) {
                     throw new NoSuchElementException();
                 }
-                E result = currentElement.item;
-                currentElement = currentElement.next;
-                innerPosition++;
+                E result = this.currentElement.item;
+                this.currentElement = this.currentElement.next;
+                this.innerPosition++;
                 return result;
             }
         });
