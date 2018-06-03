@@ -8,10 +8,13 @@ import java.util.*;
 @ThreadSafe
 public class LinkedArray<E> implements Iterable<E> {
 
+    @GuardedBy("this")
     private volatile Node<E> first = null;
     @GuardedBy("this")
     private Node<E> last = null;
+    @GuardedBy("this")
     private int modCount = 0;
+    @GuardedBy("this")
     private int size = 0;
 
     /**
@@ -83,13 +86,21 @@ public class LinkedArray<E> implements Iterable<E> {
         return result;
     }
 
+    private synchronized int getModCount() {
+        return this.modCount;
+    }
+
+    private synchronized int getSize() {
+        return this.size;
+    }
+
 
     @Override
     public Iterator<E> iterator() {
         return (new Iterator<E>() {
 
             private int innerPosition = 0;
-            private int innerModCount = modCount;
+            private int innerModCount = getModCount();
             private Node<E> currentElement = first;
 
             /**
@@ -99,7 +110,7 @@ public class LinkedArray<E> implements Iterable<E> {
              */
             @Override
             public boolean hasNext() {
-                return innerPosition < size;
+                return innerPosition < getSize();
             }
 
             /**
@@ -109,7 +120,7 @@ public class LinkedArray<E> implements Iterable<E> {
              */
             @Override
             public E next() {
-                if (this.innerModCount != modCount) {
+                if (this.innerModCount != getModCount()) {
                     throw new ConcurrentModificationException();
                 }
                 if (!hasNext()) {

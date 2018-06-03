@@ -19,7 +19,9 @@ public class ListArray<E> implements Iterable<E> {
 
     @GuardedBy("this")
     private E[] elements = (E[]) new Object[10];
+    @GuardedBy("this")
     private int position = 0;
+    @GuardedBy("this")
     private int modCount = 0;
 
     /**
@@ -51,13 +53,21 @@ public class ListArray<E> implements Iterable<E> {
         return this.elements;
     }
 
+    private synchronized int getModCount() {
+        return this.modCount;
+    }
+
+    private synchronized int getPosition() {
+        return this.position;
+    }
+
 
     @Override
     public Iterator<E> iterator() {
         return (new Iterator<E>() {
 
             private int innerPosition = 0;
-            private int innerModCount = modCount;
+            private int innerModCount = getModCount();
             private E[] innerElements = getElements();
 
             /**
@@ -67,7 +77,7 @@ public class ListArray<E> implements Iterable<E> {
              */
             @Override
             public boolean hasNext() {
-                return innerPosition < position;
+                return innerPosition < getPosition();
             }
 
             /**
@@ -76,10 +86,10 @@ public class ListArray<E> implements Iterable<E> {
              * @return элемент
              */
             @Override
-            public  E next() {
+            public E next() {
                 E result;
                 synchronized (this) {
-                    if (innerModCount != modCount) {
+                    if (innerModCount != getModCount()) {
                         throw new ConcurrentModificationException();
                     }
                     if (!hasNext()) {
