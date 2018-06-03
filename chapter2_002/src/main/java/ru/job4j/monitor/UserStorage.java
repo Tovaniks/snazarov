@@ -27,7 +27,7 @@ public class UserStorage {
      * @return true/false
      */
     public synchronized boolean add(User user) {
-        return users.putIfAbsent(user.getID(), user) != null;
+        return users.putIfAbsent(user.getID(), user) == null;
     }
 
     /**
@@ -37,7 +37,7 @@ public class UserStorage {
      * @return true/false
      */
     public synchronized boolean update(User user) {
-        return users.replace(user.getID(),users.get(user.getID()),user);
+        return users.replace(user.getID(), users.get(user.getID()), user);
 
     }
 
@@ -48,7 +48,7 @@ public class UserStorage {
      * @return true/false
      */
     public synchronized boolean delete(User user) {
-        return this.users.remove(user.getID(),user);
+        return this.users.remove(user.getID(), user);
 
     }
 

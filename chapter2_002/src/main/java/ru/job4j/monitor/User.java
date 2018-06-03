@@ -70,7 +70,7 @@ public class User {
     @Override
     public boolean equals(Object object) {
         boolean success = false;
-        if(object instanceof User) {
+        if (object instanceof User) {
             User user = (User) object;
             success = this.id == user.getID() && this.name.equals(user.getName()) && this.amount == user.getAmount();
         }
