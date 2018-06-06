@@ -2,8 +2,6 @@ package ru.job4j.test2;
 
 import org.junit.Test;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
 
