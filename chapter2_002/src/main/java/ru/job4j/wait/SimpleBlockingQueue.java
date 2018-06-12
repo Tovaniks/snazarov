@@ -48,7 +48,7 @@ public class SimpleBlockingQueue<E> {
         while (this.queue.size() == maxSize) {
             this.wait();
         }
-        this.notify();
+        this.notifyAll();
         this.queue.add(values);
     }
 
@@ -62,7 +62,7 @@ public class SimpleBlockingQueue<E> {
         while (this.queue.isEmpty()) {
             this.wait();
         }
-        this.notify();
+        this.notifyAll();
         return queue.poll();
     }
 
