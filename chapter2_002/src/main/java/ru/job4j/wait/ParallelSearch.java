@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Class User.
@@ -27,9 +28,9 @@ public class ParallelSearch {
     private final String text;
     private final List<String> exts;
     private volatile boolean finish = false;
+    private final Object lock = new Object();
 
-    @GuardedBy("this")
-    private final Queue<String> files;
+    private final Queue<String> files = new LinkedBlockingQueue<>();
 
     @GuardedBy("this")
     private final List<String> paths = new ArrayList<>();
@@ -45,7 +46,6 @@ public class ParallelSearch {
         this.root = root;
         this.text = text;
         this.exts = exts;
-        files = new LinkedList<>();
     }
 
     /**
@@ -83,9 +83,14 @@ public class ParallelSearch {
      *
      * @return результат
      */
-    public synchronized Queue<String> result() {
+    public Queue<String> result() throws InterruptedException {
         Queue<String> result = new LinkedList<>();
-        result.addAll(this.paths);
+        synchronized (lock) {
+            while (!finish && !exts.isEmpty()) {
+                lock.wait();
+            }
+            result.addAll(this.paths);
+        }
         return result;
     }
 
@@ -94,9 +99,10 @@ public class ParallelSearch {
      *
      * @param path путь
      */
-    private synchronized void addFiles(String path) {
-        files.add(path);
-        notifyAll();
+    private void addFiles(String path) {
+        synchronized (lock) {
+            files.add(path);
+        }
     }
 
     class MyVisitor extends SimpleFileVisitor<Path> {
@@ -124,29 +130,28 @@ public class ParallelSearch {
      * Читаем файлы из списка Files и проверяем наличие в файле совпадений с переменной text.
      * Если совпадения есть, перебрасываем в результирующий список.
      */
-    private synchronized void read() {
+    private void read() {
         while (!finish || !files.isEmpty()) {
-            while (files.isEmpty()) {
+            if (!files.isEmpty()) {
+                Path path = Paths.get(files.poll());
+                List<String> lines = new ArrayList<>();
                 try {
-                    this.wait();
-                } catch (InterruptedException ex) {
+                    lines = Files.readAllLines(path);
+                } catch (IOException ex) {
                     ex.printStackTrace();
                 }
-            }
-            notify();
-            Path path = Paths.get(files.poll());
-            List<String> lines = new ArrayList<>();
-            try {
-                lines = Files.readAllLines(path);
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-            for (String line : lines) {
-                if (line.contains(text)) {
-                    this.paths.add(path.toString());
-                    break;
+                for (String line : lines) {
+                    if (line.contains(text)) {
+                        synchronized (lock) {
+                            this.paths.add(path.toString());
+                            lock.notifyAll();
+                        }
+                        break;
+                    }
                 }
             }
+
         }
     }
 }
+
