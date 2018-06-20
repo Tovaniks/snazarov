@@ -1,7 +1,6 @@
 package ru.job4j.wait;
 
 
-import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
 
 import java.io.IOException;
@@ -11,6 +10,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -29,11 +29,8 @@ public class ParallelSearch {
     private final List<String> exts;
     private volatile boolean finish = false;
     private final Object lock = new Object();
-
     private final Queue<String> files = new LinkedBlockingQueue<>();
-
-    @GuardedBy("lock")
-    private final List<String> paths = new ArrayList<>();
+    private final List<String> paths = new CopyOnWriteArrayList<>();
 
     /**
      * Конструктор
@@ -62,8 +59,10 @@ public class ParallelSearch {
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
-                finish = true;
-
+                synchronized (lock) {
+                    finish = true;
+                    lock.notifyAll();
+                }
             }
         };
         Thread read = new Thread() {
@@ -131,10 +130,7 @@ public class ParallelSearch {
                 }
                 for (String line : lines) {
                     if (line.contains(text)) {
-                        synchronized (lock) {
-                            this.paths.add(path.toString());
-                            lock.notifyAll();
-                        }
+                        this.paths.add(path.toString());
                         break;
                     }
                 }
