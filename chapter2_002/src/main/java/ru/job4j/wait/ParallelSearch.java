@@ -32,7 +32,7 @@ public class ParallelSearch {
 
     private final Queue<String> files = new LinkedBlockingQueue<>();
 
-    @GuardedBy("this")
+    @GuardedBy("lock")
     private final List<String> paths = new ArrayList<>();
 
     /**
@@ -86,23 +86,12 @@ public class ParallelSearch {
     public Queue<String> result() throws InterruptedException {
         Queue<String> result = new LinkedList<>();
         synchronized (lock) {
-            while (!finish && !exts.isEmpty()) {
+            while (!finish || !files.isEmpty()) {
                 lock.wait();
             }
             result.addAll(this.paths);
         }
         return result;
-    }
-
-    /**
-     * Добавляем путь
-     *
-     * @param path путь
-     */
-    private void addFiles(String path) {
-        synchronized (lock) {
-            files.add(path);
-        }
     }
 
     class MyVisitor extends SimpleFileVisitor<Path> {
@@ -118,7 +107,7 @@ public class ParallelSearch {
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
             for (String ext : exts) {
                 if (file.getFileName().toString().endsWith(ext)) {
-                    ParallelSearch.this.addFiles(file.toAbsolutePath().toString());
+                    ParallelSearch.this.files.add(file.toAbsolutePath().toString());
                 }
             }
             return FileVisitResult.CONTINUE;
