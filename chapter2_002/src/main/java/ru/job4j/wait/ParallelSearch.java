@@ -6,11 +6,7 @@ import net.jcip.annotations.ThreadSafe;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.*;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -30,7 +26,7 @@ public class ParallelSearch {
     private volatile boolean finish = false;
     private final Object lock = new Object();
     private final Queue<String> files = new LinkedBlockingQueue<>();
-    private final List<String> paths = new CopyOnWriteArrayList<>();
+    private final List<String> paths = Collections.synchronizedList(new ArrayList<>());
 
     /**
      * Конструктор
@@ -61,7 +57,6 @@ public class ParallelSearch {
                 }
                 synchronized (lock) {
                     finish = true;
-                    lock.notifyAll();
                 }
             }
         };
@@ -136,6 +131,9 @@ public class ParallelSearch {
                 }
             }
 
+        }
+        synchronized (lock) {
+            lock.notifyAll();
         }
     }
 }
