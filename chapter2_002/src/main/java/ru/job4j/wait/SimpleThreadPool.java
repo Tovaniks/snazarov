@@ -24,9 +24,7 @@ public class SimpleThreadPool {
     @GuardedBy("lock")
     private final Queue<Runnable> tasks = new LinkedBlockingQueue<>();
     @GuardedBy("lock")
-    private final Integer core;
-    @GuardedBy("lock")
-    private Integer count = 0;
+    private volatile boolean init = false;
     @GuardedBy("lock")
     private volatile boolean stop = false;
     private final Object lock = new Object();
@@ -36,84 +34,47 @@ public class SimpleThreadPool {
     }
 
     public SimpleThreadPool(final int core) {
-        this.core = core;
-        init();
+        for (int index = 0; index < core; index++) {
+            threads.add(new Thread() {
+                @Override
+                public void run() {
+                    while (!stop) {
+                        while (tasks.isEmpty() && !stop) {
+                            synchronized (lock) {
+                                try {
+                                    lock.wait();
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                        if (stop) {
+                            break;
+                        }
+                        Thread thread = new Thread(tasks.poll());
+                        thread.start();
+                        try {
+                            thread.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+            });
+        }
     }
 
     /**
-     * Инициализация двух потоков.
-     * Одновременно запускается два потока, один должен перекидывать таски из tasks в threads, а другой должен запускать таски из threads.
-     * До тех пор, пока выполняется core-потоков, ни одна таска не может быть запущена.
+     * Запуск потоков в threads
      */
     private void init() {
-        new Thread() {
-            @Override
-            public void run() {
-                synchronized (lock) {
-                    while (!stop) {
-                        while (tasks.isEmpty() || count >= core) {
-                            try {
-                                lock.wait();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        if (stop) {
-                            break;
-                        }
-                        count++;
-                        threads.add(new Thread(tasks.poll()));
-                        lock.notifyAll();
-                    }
-                }
-
-            }
-        }.start();
-
-        new Thread() {
-            @Override
-            public void run() {
-                synchronized (lock) {
-                    while (!stop) {
-                        while (threads.isEmpty()) {
-                            try {
-                                lock.wait();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        if (stop) {
-                            break;
-                        }
-                        exec(threads.remove(0));
-                    }
-                }
-            }
-        }.start();
-    }
-
-    /**
-     * Запускается таска, ожидается ее окончание, почле чего уменьшается счетчик работающих тасок.
-     *
-     * @param thread таска
-     */
-    private void exec(final Thread thread) {
-        new Thread() {
-            @Override
-            public void run() {
+        synchronized (lock) {
+            this.init = true;
+            for (Thread thread : threads) {
                 thread.start();
-                try {
-                    thread.join();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                synchronized (lock) {
-                    count--;
-                    lock.notifyAll();
-                }
             }
-        }.start();
-
+        }
     }
 
 
@@ -123,6 +84,9 @@ public class SimpleThreadPool {
      * @param job таска
      */
     public void work(Runnable job) {
+        if (!init) {
+            init();
+        }
         synchronized (lock) {
             if (!stop) {
                 tasks.offer(new Thread(job));
@@ -137,6 +101,7 @@ public class SimpleThreadPool {
     public void shutdown() {
         synchronized (lock) {
             this.stop = true;
+            lock.notifyAll();
         }
     }
 
