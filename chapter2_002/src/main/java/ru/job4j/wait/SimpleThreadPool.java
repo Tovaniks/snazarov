@@ -21,11 +21,8 @@ public class SimpleThreadPool {
 
     @GuardedBy("lock")
     private final List<Thread> threads = new LinkedList<>();
-    @GuardedBy("lock")
     private final Queue<Runnable> tasks = new LinkedBlockingQueue<>();
-    @GuardedBy("lock")
     private volatile boolean init = false;
-    @GuardedBy("lock")
     private volatile boolean stop = false;
     private final Object lock = new Object();
 
@@ -51,14 +48,7 @@ public class SimpleThreadPool {
                         if (stop) {
                             break;
                         }
-                        Thread thread = new Thread(tasks.poll());
-                        thread.start();
-                        try {
-                            thread.join();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
+                        tasks.poll().run();
                     }
                 }
             });
