@@ -102,7 +102,7 @@ public class MenuTracker {
             System.out.println(String.format("%s%s------------ Добавление новой заявки --------------", SEPARATOR, SEPARATOR));
             String name = input.ask("Введите имя заявки :");
             String desc = input.ask("Введите описание :");
-            Item item = new Item(name, desc, System.currentTimeMillis());
+            Item item = new Item(name, desc);
             tracker.add(item);
             System.out.println(String.format("------------ Новая заявка с getId : %s-----------", item.getID()));
         }
@@ -275,7 +275,7 @@ public class MenuTracker {
             System.out.println("ID: " + item.getID());
             System.out.println("Заявка: " + item.getName());
             System.out.println("Описание: " + item.getDesc());
-            System.out.println("Дата создания: " + item.getCreated() + SEPARATOR);
+            System.out.println("Дата создания: " + item.getTime() + SEPARATOR);
         }
     }
 }
@@ -347,7 +347,7 @@ class EditItem extends BaseAction {
         String id = input.ask(this.separator + "Введите ID заявки:");
         String name = input.ask(this.separator + "Введите новое имя заявки:");
         String desc = input.ask(this.separator + "Введите описание заявки:");
-        Item item = new Item(name, desc, System.currentTimeMillis());
+        Item item = new Item(name, desc);
         item.setID(id);
         tracker.replace(id, item);
     }

@@ -1,8 +1,11 @@
 package ru.job4j.tracker;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Tracker
@@ -12,10 +15,27 @@ import java.util.Random;
  * @since 2018.02.21
  */
 
-public class Tracker {
-    private List<Item> items = new ArrayList<>();
-    private static final Random RANDOM = new Random();
+public class Tracker implements AutoCloseable {
 
+    private Connection connection;
+
+    private String path = "src//main//resources//";
+
+    public Tracker(Config config) {
+        try {
+            connection = DriverManager.getConnection(String.format("jdbc:postgresql://%s/%s", config.getProperty("url"), config.getProperty("database")),
+                    config.getProperty("user"), config.getProperty("password"));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        PreparedStatement statement;
+        try {
+            statement = connection.prepareStatement(getQueryFromFile(path, "item.sql"));
+            statement.execute();
+        } catch (SQLException e1) {
+            e1.printStackTrace();
+        }
+    }
 
     /**
      * Добавляем элемент в трекер
@@ -24,8 +44,17 @@ public class Tracker {
      * @return добавленное значение.
      */
     public Item add(Item item) {
-        items.add(item);
-        item.setID(generateID());
+        try (PreparedStatement statement = connection.prepareStatement(getQueryFromFile(path, "add.sql"))) {
+            statement.setString(1, item.getName());
+            statement.setString(2, item.getDesc());
+            ResultSet rs = statement.executeQuery();
+            if (rs.next()) {
+                item.setID(rs.getString(1));
+            }
+            item.setTime(LocalDateTime.parse(rs.getString(2).replace(' ', 'T')));
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return item;
     }
 
@@ -37,11 +66,13 @@ public class Tracker {
      * @param item таска
      */
     public void replace(String id, Item item) {
-        for (int index = 0; index < this.items.size(); index++) {
-            if (this.items.get(index).getID().equals(id)) {
-                this.items.set(index, item);
-                break;
-            }
+        try (PreparedStatement statement = connection.prepareStatement(getQueryFromFile(path, "replace.sql"))) {
+            statement.setString(1, item.getName());
+            statement.setString(2, item.getDesc());
+            statement.setInt(3, Integer.parseInt(id));
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -52,11 +83,11 @@ public class Tracker {
      * @param id уникальное ID
      */
     public void delete(String id) {
-        for (int index = 0; index < this.items.size(); index++) {
-            if (this.items.get(index).getID().equals(id)) {
-                this.items.remove(index);
-                break;
-            }
+        try (PreparedStatement statement = connection.prepareStatement(getQueryFromFile(path, "delete.sql"))) {
+            statement.setInt(1, Integer.parseInt(id));
+            statement.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -67,9 +98,16 @@ public class Tracker {
      * @return список тасок.
      */
     public Item[] findAll() {
-        Item[] result = new Item[items.size()];
-        System.arraycopy(this.items.toArray(), 0, result, 0, items.size());
-        return result;
+        List<Item> items = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(getQueryFromFile(path, "findall.sql"))) {
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                items.add(new Item(rs.getString(1), rs.getString(2), rs.getString(3), LocalDateTime.parse(rs.getString(4).replace(' ', 'T'))));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return items.toArray(new Item[items.size()]);
     }
 
     /**
@@ -79,13 +117,17 @@ public class Tracker {
      * @return список тасок с одинаковым названием.
      */
     public Item[] findByName(String key) {
-        Tracker result = new Tracker();
-        for (Item item : this.items) {
-            if (item.getName().equals(key)) {
-                result.add(item);
+        List<Item> items = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(getQueryFromFile(path, "findbyname.sql"))) {
+            statement.setString(1, key);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                items.add(new Item(rs.getString(1), rs.getString(2), rs.getString(3), LocalDateTime.parse(rs.getString(4).replace(' ', 'T'))));
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return result.findAll();
+        return items.toArray(new Item[items.size()]);
     }
 
     /**
@@ -96,23 +138,44 @@ public class Tracker {
      */
     public Item findByID(String id) {
         Item result = null;
-        for (Item item : this.items) {
-            if (item.getID().equals(id)) {
-                result = item;
-                break;
+        try (PreparedStatement statement = connection.prepareStatement(getQueryFromFile(path, "findbyid.sql"))) {
+            statement.setInt(1, Integer.parseInt(id));
+            ResultSet rs = statement.executeQuery();
+
+            if (rs.next()) {
+                result = new Item(rs.getString(1), rs.getString(2), rs.getString(3),
+                        LocalDateTime.parse(rs.getString(4).replace(' ', 'T')));
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return result;
     }
 
 
-    /**
-     * Генерация уникального ключа
-     *
-     * @return уникальный ключ.
-     */
-    private String generateID() {
-        return String.valueOf(System.currentTimeMillis() + RANDOM.nextInt());
+    @Override
+    public void close() throws Exception {
+        connection.close();
     }
 
+    /**
+     * Возвращаем запрос из файла
+     *
+     * @param path путь к файлу
+     * @param file название файла
+     * @return запрос
+     */
+    private String getQueryFromFile(final String path, final String file) {
+        StringBuilder result = new StringBuilder();
+        try (FileInputStream input = new FileInputStream(String.valueOf(path + file))) {
+            int data = input.read();
+            while (data != -1) {
+                result.append((char) data);
+                data = input.read();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result.toString();
+    }
 }

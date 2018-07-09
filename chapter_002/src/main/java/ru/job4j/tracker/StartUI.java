@@ -29,7 +29,7 @@ public class StartUI {
      * @param args параметры.
      */
     public static void main(String[] args) {
-        new StartUI(new ValidateInput(new ConsoleInput()), new Tracker()).init();
+        new StartUI(new ValidateInput(new ConsoleInput()), new Tracker(new Config())).init();
     }
 
     /**

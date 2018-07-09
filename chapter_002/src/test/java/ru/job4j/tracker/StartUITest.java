@@ -22,96 +22,120 @@ public class StartUITest {
 
     @Test
     public void whenUserAddItemsThenTrackerHasNewItemWithSameName() {
-        Tracker tracker = new Tracker();
-        Input input = new StubInput(new String[]{"0", "test name", "desc", "6"});
-        new StartUI(input, tracker).init();
-        assertThat(tracker.findAll()[0].getName(), is("test name"));
+        try (Tracker tracker = new Tracker(new Config())) {
+            removeAll(tracker);
+            Input input = new StubInput(new String[]{"0", "test name", "desc", "6"});
+            new StartUI(input, tracker).init();
+            assertThat(tracker.findAll()[0].getName(), is("test name"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
     public void whenUpdateThenTrackerHasUpdatedValue() {
-        Tracker tracker = new Tracker();
-        String name = "test name";
-        String description = "desc";
-        Item item = tracker.add(new Item(name, description));
-        Input input = new StubInput(new String[]{"2", item.getID(), "new test", "new desc", "6"});
-        new StartUI(input, tracker).init();
-        assertThat(tracker.findByID(item.getID()).getName(), is("new test"));
+        try (Tracker tracker = new Tracker(new Config())) {
+            removeAll(tracker);
+            String name = "test name";
+            String description = "desc";
+            Item item = tracker.add(new Item(name, description));
+            Input input = new StubInput(new String[]{"2", item.getID(), "new test", "new desc", "6"});
+            new StartUI(input, tracker).init();
+            assertThat(tracker.findByID(item.getID()).getName(), is("new test"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
     public void whenUserDeleteItemInTrackerThenItemBecomeLess() {
-        Tracker tracker = new Tracker();
-        Item first = new Item("Таска", "Первая моя");
-        Item second = new Item("Баг", "второй мой");
-        Item third = new Item("Баг", "третий мой");
-        tracker.add(first);
-        tracker.add(second);
-        tracker.add(third);
-        Input input = new StubInput(new String[]{"3", second.getID(), "6"});
-        new StartUI(input, tracker).init();
-        System.out.println(menu);
-        assertThat(tracker.findAll(), is(new Item[]{first, third}));
+        try (Tracker tracker = new Tracker(new Config())) {
+            removeAll(tracker);
+            Item first = new Item("Таска", "Первая моя");
+            Item second = new Item("Баг", "второй мой");
+            Item third = new Item("Баг", "третий мой");
+            tracker.add(first);
+            tracker.add(second);
+            tracker.add(third);
+            Input input = new StubInput(new String[]{"3", second.getID(), "6"});
+            new StartUI(input, tracker).init();
+            System.out.println(menu);
+            assertThat(tracker.findAll(), is(new Item[]{first, third}));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
     public void whenShowAll() {
-        Tracker tracker = new Tracker();
-        Item first = new Item("Таска", "Первая моя");
-        Item second = new Item("Баг", "второй мой");
-        tracker.add(first);
-        tracker.add(second);
-        String result = initResult(new StubInput(new String[]{"1", "6"}), tracker);
-        assertThat(
-                result,
-                is(String.format("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s", this.separator, this.separator,
-                        "------------ Список заявок: --------------", this.separator, this.separator, this.separator, "ID: ", first.getID(),
-                        this.separator, "Заявка: ", first.getName(), this.separator, "Описание: ", first.getDesc(), this.separator, "Дата создания: ",
-                        first.getCreated(), this.separator, this.separator, "ID: ", second.getID(), this.separator, "Заявка: ", second.getName(),
-                        this.separator, "Описание: ", second.getDesc(), this.separator, "Дата создания: ", second.getCreated(), this.separator,
-                        this.separator, this.separator, this.separator, this.separator, this.separator)
-                ));
+        try (Tracker tracker = new Tracker(new Config())) {
+            removeAll(tracker);
+            Item first = new Item("Таска", "Первая моя");
+            Item second = new Item("Баг", "второй мой");
+            tracker.add(first);
+            tracker.add(second);
+            String result = initResult(new StubInput(new String[]{"1", "6"}), tracker);
+            assertThat(
+                    result,
+                    is(String.format("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s", this.separator, this.separator,
+                            "------------ Список заявок: --------------", this.separator, this.separator, this.separator, "ID: ", first.getID(),
+                            this.separator, "Заявка: ", first.getName(), this.separator, "Описание: ", first.getDesc(), this.separator, "Дата создания: ",
+                            first.getTime(), this.separator, this.separator, "ID: ", second.getID(), this.separator, "Заявка: ", second.getName(),
+                            this.separator, "Описание: ", second.getDesc(), this.separator, "Дата создания: ", second.getTime(), this.separator,
+                            this.separator, this.separator, this.separator, this.separator, this.separator)
+                    ));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
     public void whenFindByIDThenShow() {
-        Tracker tracker = new Tracker();
-        Item first = new Item("Таска", "Первая моя");
-        Item second = new Item("Баг", "второй мой");
-        Item third = new Item("Баг", "третий мой");
-        tracker.add(first);
-        tracker.add(second);
-        tracker.add(third);
-        String result = initResult(new StubInput(new String[]{"4", third.getID(), "6"}), tracker);
-        assertThat(
-                result,
-                is(String.format("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s", this.separator, this.separator,
-                        "------------ Результат: --------------", this.separator, this.separator, this.separator, "ID: ",
-                        third.getID(), this.separator, "Заявка: ", third.getName(), this.separator, "Описание: ", third.getDesc(),
-                        this.separator, "Дата создания: ", third.getCreated(), this.separator, this.separator, this.separator,
-                        this.separator, this.separator, this.separator)));
+        try (Tracker tracker = new Tracker(new Config())) {
+            removeAll(tracker);
+            Item first = new Item("Таска", "Первая моя");
+            Item second = new Item("Баг", "второй мой");
+            Item third = new Item("Баг", "третий мой");
+            tracker.add(first);
+            tracker.add(second);
+            tracker.add(third);
+            String result = initResult(new StubInput(new String[]{"4", third.getID(), "6"}), tracker);
+            assertThat(
+                    result,
+                    is(String.format("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s", this.separator, this.separator,
+                            "------------ Результат: --------------", this.separator, this.separator, this.separator, "ID: ",
+                            third.getID(), this.separator, "Заявка: ", third.getName(), this.separator, "Описание: ", third.getDesc(),
+                            this.separator, "Дата создания: ", third.getTime(), this.separator, this.separator, this.separator,
+                            this.separator, this.separator, this.separator)));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
     public void whenFindByNameThenShow() {
-        Tracker tracker = new Tracker();
-        Item first = new Item("Таска", "Первая моя");
-        Item second = new Item("Баг", "второй мой");
-        Item third = new Item("Баг", "третий мой");
-        tracker.add(first);
-        tracker.add(second);
-        tracker.add(third);
-        String result = initResult(new StubInput(new String[]{"5", "Баг", "6"}), tracker);
-        assertThat(
-                result,
-                is(
-                        String.format("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s", this.separator, this.separator,
-                                "------------ Список заявок: --------------", this.separator, this.separator, this.separator, "ID: ", second.getID(),
-                                this.separator, "Заявка: ", second.getName(), this.separator, "Описание: ", second.getDesc(), this.separator,
-                                "Дата создания: ", second.getCreated(), this.separator, this.separator, "ID: ", third.getID(), this.separator,
-                                "Заявка: ", third.getName(), this.separator, "Описание: ", third.getDesc(), this.separator, "Дата создания: ",
-                                third.getCreated(), this.separator, this.separator, this.separator, this.separator, this.separator, this.separator)
-                ));
+        try (Tracker tracker = new Tracker(new Config())) {
+            removeAll(tracker);
+            Item first = new Item("Таска", "Первая моя");
+            Item second = new Item("Баг", "второй мой");
+            Item third = new Item("Баг", "третий мой");
+            tracker.add(first);
+            tracker.add(second);
+            tracker.add(third);
+            String result = initResult(new StubInput(new String[]{"5", "Баг", "6"}), tracker);
+            assertThat(
+                    result,
+                    is(
+                            String.format("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s", this.separator, this.separator,
+                                    "------------ Список заявок: --------------", this.separator, this.separator, this.separator, "ID: ", second.getID(),
+                                    this.separator, "Заявка: ", second.getName(), this.separator, "Описание: ", second.getDesc(), this.separator,
+                                    "Дата создания: ", second.getTime(), this.separator, this.separator, "ID: ", third.getID(), this.separator,
+                                    "Заявка: ", third.getName(), this.separator, "Описание: ", third.getDesc(), this.separator, "Дата создания: ",
+                                    third.getTime(), this.separator, this.separator, this.separator, this.separator, this.separator, this.separator)
+                    ));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -130,6 +154,12 @@ public class StartUITest {
     @After
     public void backOutput() {
         System.setOut(this.stdout);
+    }
+
+    private void removeAll(Tracker tracker) {
+        for (Item item : tracker.findAll()) {
+            tracker.delete(item.getID());
+        }
     }
 
 

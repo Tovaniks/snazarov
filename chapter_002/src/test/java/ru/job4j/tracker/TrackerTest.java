@@ -2,7 +2,6 @@ package ru.job4j.tracker;
 
 import org.junit.Test;
 
-
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
@@ -11,102 +10,145 @@ public class TrackerTest {
 
     @Test
     public void whenReplaceNameThenReturnNewName() {
-        Tracker tracker = new Tracker();
-        Item previous = new Item("test1", "testDescription", 123L);
-        tracker.add(previous);
-        Item next = new Item("test2", "testDescription2", 1234L);
-        next.setID(previous.getID());
-        tracker.replace(previous.getID(), next);
-        assertThat(tracker.findByID(previous.getID()).getName(), is("test2"));
+        try (Tracker tracker = new Tracker(new Config())) {
+            removeAll(tracker);
+            Item previous = new Item("test1", "testDescription");
+            tracker.add(previous);
+            Item next = new Item("test2", "testDescription2");
+            next.setID(previous.getID());
+            tracker.replace(previous.getID(), next);
+            assertThat(tracker.findByID(previous.getID()).getName(), is("test2"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
     @Test
     public void whenAddNewItem() {
-        Tracker tracker = new Tracker();
-        Item firstItem = new Item("task", "some text", 555L);
-        Item secondItem = new Item("bug", "text", 550L);
-        tracker.add(firstItem);
-        tracker.add(secondItem);
-        assertThat(tracker.findAll(), is(new Item[]{firstItem, secondItem}));
+        try (Tracker tracker = new Tracker(new Config())) {
+            removeAll(tracker);
+            Item firstItem = new Item("task", "some text");
+            Item secondItem = new Item("bug", "text");
+            tracker.add(firstItem);
+            tracker.add(secondItem);
+            Item[] result = tracker.findAll();
+            Item[] expect = new Item[]{firstItem, secondItem};
+            for (int index = 0; index < result.length; index++) {
+                assertThat(result[index].equals(expect[index]), is(true));
+            }
+            assertThat(result.length, is(expect.length));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 
     @Test
     public void whenTrackerIsEmpty() {
-        Tracker tracker = new Tracker();
-        assertThat(tracker.findAll(), is(new Item[]{}));
+        try (Tracker tracker = new Tracker(new Config())) {
+            removeAll(tracker);
+            assertThat(tracker.findAll(), is(new Item[]{}));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
     @Test
     public void whenElevenItems() {
-        Tracker tracker = new Tracker();
-        Item[] massive = new Item[11];
-        for (int index = 0; index < 11; index++) {
-            massive[index] = new Item("task", "some text", 555L);
-            tracker.add(massive[index]);
+        try (Tracker tracker = new Tracker(new Config())) {
+            removeAll(tracker);
+            Item[] massive = new Item[11];
+            for (int index = 0; index < 11; index++) {
+                massive[index] = new Item("task", "some text");
+                tracker.add(massive[index]);
+            }
+            assertThat(tracker.findAll(), is(massive));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        assertThat(tracker.findAll(), is(massive));
     }
 
 
     @Test
     public void whenFindByName() {
-        Tracker tracker = new Tracker();
-        Item[] expect = new Item[]{new Item("task", "какой-то текст", 555L),
-                new Item("task", "еще какой-то текст", 10L),
-                new Item("task", "и тут текст", 35L),
-                new Item("task", "и здесь текст", 26L)};
-        tracker.add(new Item("баг", "текст", 55L));
-        tracker.add(expect[0]);
-        tracker.add(new Item("поручение", "рандомный текст", 100L));
-        tracker.add(expect[1]);
-        tracker.add(expect[2]);
-        tracker.add(new Item("фича", "тут что-то должно быть", 123L));
-        tracker.add(new Item("фича", "фича", 5L));
-        tracker.add(expect[3]);
-        tracker.add(new Item("таска", "фича", 1L));
-        assertThat(tracker.findByName("task"), is(expect));
-
+        try (Tracker tracker = new Tracker(new Config())) {
+            removeAll(tracker);
+            Item[] expect = new Item[]{new Item("task", "какой-то текст"),
+                    new Item("task", "еще какой-то текст"),
+                    new Item("task", "и тут текст"),
+                    new Item("task", "и здесь текст")};
+            tracker.add(new Item("баг", "текст"));
+            tracker.add(expect[0]);
+            tracker.add(new Item("поручение", "рандомный текст"));
+            tracker.add(expect[1]);
+            tracker.add(expect[2]);
+            tracker.add(new Item("фича", "тут что-то должно быть"));
+            tracker.add(new Item("фича", "фича"));
+            tracker.add(expect[3]);
+            tracker.add(new Item("таска", "фича"));
+            assertThat(tracker.findByName("task"), is(expect));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
     @Test
     public void whenNotFindByName() {
-        Tracker tracker = new Tracker();
-        tracker.add(new Item("баг", "текст", 55L));
-        tracker.add(new Item("поручение", "рандомный текст", 100L));
-        tracker.add(new Item("фича", "тут что-то должно быть", 123L));
-        assertThat(tracker.findByName("task"), is(new Item[]{}));
+        try (Tracker tracker = new Tracker(new Config())) {
+            removeAll(tracker);
+            tracker.add(new Item("баг", "текст"));
+            tracker.add(new Item("поручение", "рандомный текст"));
+            tracker.add(new Item("фича", "тут что-то должно быть"));
+            assertThat(tracker.findByName("task"), is(new Item[]{}));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
     }
 
     @Test
     public void whenDeleteItemInMassive() {
-        Tracker tracker = new Tracker();
-        Item first = new Item("баг", "текст", 55L);
-        Item second = new Item("поручение", "рандомный текст", 100L);
-        Item third = new Item("фича", "тут что-то должно быть", 123L);
-        tracker.add(first);
-        tracker.add(second);
-        tracker.add(third);
-        tracker.delete(second.getID());
-        assertThat(tracker.findAll(), is(new Item[]{first, third}));
+        try (Tracker tracker = new Tracker(new Config())) {
+            removeAll(tracker);
+            Item first = new Item("баг", "текст");
+            Item second = new Item("поручение", "рандомный текст");
+            Item third = new Item("фича", "тут что-то должно быть");
+            tracker.add(first);
+            tracker.add(second);
+            tracker.add(third);
+            tracker.delete(second.getID());
+            assertThat(tracker.findAll(), is(new Item[]{first, third}));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
     public void whenFindItemByID() {
-        Tracker tracker = new Tracker();
-        Item first = new Item("баг", "текст", 55L);
-        Item second = new Item("поручение", "рандомный текст", 100L);
-        Item third = new Item("фича", "тут что-то должно быть", 123L);
-        tracker.add(first);
-        tracker.add(second);
-        tracker.add(third);
-        Item result = tracker.findByID(second.getID());
-        assertThat(result, is(second));
+        try (Tracker tracker = new Tracker(new Config())) {
+            removeAll(tracker);
+            Item first = new Item("баг", "текст");
+            Item second = new Item("поручение", "рандомный текст");
+            Item third = new Item("фича", "тут что-то должно быть");
+            tracker.add(first);
+            tracker.add(second);
+            tracker.add(third);
+            Item result = tracker.findByID(second.getID());
+            assertThat(result, is(second));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void removeAll(Tracker tracker) {
+        for (Item item : tracker.findAll()) {
+            tracker.delete(item.getID());
+        }
     }
 }
 

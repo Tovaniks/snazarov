@@ -1,22 +1,23 @@
 package ru.job4j.tracker;
 
+import java.time.LocalDateTime;
+
 public class Item {
     private String id;
     private String name;
     private String desc;
-    private long created;
-    //private String[] comments;
+    private LocalDateTime created;
 
-    public Item(String name, String description, long create) {
+    public Item(final String id, final String name, final String description, final LocalDateTime create) {
+        this.id = id;
         this.name = name;
         this.desc = description;
         this.created = create;
     }
 
-    public Item(String name, String description) {
+    public Item(final String name, final String description) {
         this.name = name;
         this.desc = description;
-        this.created = System.currentTimeMillis();
     }
 
     public String getID() {
@@ -33,13 +34,34 @@ public class Item {
         return desc;
     }
 
-
-    public long getCreated() {
+    public LocalDateTime getTime() {
         return created;
     }
 
-    public void setID(String id) {
+    public void setID(final String id) {
         this.id = id;
     }
 
+    public void setTime(final LocalDateTime created) {
+        this.created = created;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        boolean result = false;
+        if (obj instanceof Item) {
+            Item item = (Item) obj;
+            result = item.getID().equals(this.getID()) && item.getName().equals(this.getName()) && item.getDesc().equals(this.getDesc()) && item.getTime().equals(this.getTime());
+        }
+        return result;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + name.hashCode();
+        result = 31 * result + desc.hashCode();
+        result = 31 * result + created.hashCode();
+        return result;
+    }
 }
