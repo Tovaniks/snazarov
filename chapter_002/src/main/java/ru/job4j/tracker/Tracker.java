@@ -1,5 +1,9 @@
 package ru.job4j.tracker;
 
+
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.*;
@@ -19,6 +23,8 @@ public class Tracker implements AutoCloseable {
 
     private Connection connection;
 
+    private static final Logger LOG = LogManager.getLogger(Tracker.class);
+
     private String path = "src//main//resources//";
 
     public Tracker(Config config) {
@@ -26,14 +32,12 @@ public class Tracker implements AutoCloseable {
             connection = DriverManager.getConnection(String.format("jdbc:postgresql://%s/%s", config.getProperty("url"), config.getProperty("database")),
                     config.getProperty("user"), config.getProperty("password"));
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
-        PreparedStatement statement;
-        try {
-            statement = connection.prepareStatement(getQueryFromFile(path, "item.sql"));
+        try (PreparedStatement statement = connection.prepareStatement(getQueryFromFile(path, "item.sql"))) {
             statement.execute();
-        } catch (SQLException e1) {
-            e1.printStackTrace();
+        } catch (SQLException e) {
+            LOG.error(e.getMessage(), e);
         }
     }
 
@@ -44,7 +48,7 @@ public class Tracker implements AutoCloseable {
      * @return добавленное значение.
      */
     public Item add(Item item) {
-        try (PreparedStatement statement = connection.prepareStatement(getQueryFromFile(path, "add.sql"))) {
+        try (PreparedStatement statement = connection.prepareStatement("insert into public.item(name, description) values (?, ?) returning id, creationdate;")) {
             statement.setString(1, item.getName());
             statement.setString(2, item.getDesc());
             ResultSet rs = statement.executeQuery();
@@ -53,7 +57,7 @@ public class Tracker implements AutoCloseable {
             }
             item.setTime(LocalDateTime.parse(rs.getString(2).replace(' ', 'T')));
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
         return item;
     }
@@ -66,13 +70,13 @@ public class Tracker implements AutoCloseable {
      * @param item таска
      */
     public void replace(String id, Item item) {
-        try (PreparedStatement statement = connection.prepareStatement(getQueryFromFile(path, "replace.sql"))) {
+        try (PreparedStatement statement = connection.prepareStatement("update public.item set name = ?, description = ? where id = ?;")) {
             statement.setString(1, item.getName());
             statement.setString(2, item.getDesc());
             statement.setInt(3, Integer.parseInt(id));
             statement.execute();
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
     }
 
@@ -83,11 +87,11 @@ public class Tracker implements AutoCloseable {
      * @param id уникальное ID
      */
     public void delete(String id) {
-        try (PreparedStatement statement = connection.prepareStatement(getQueryFromFile(path, "delete.sql"))) {
+        try (PreparedStatement statement = connection.prepareStatement("delete from public.item where id = ?;")) {
             statement.setInt(1, Integer.parseInt(id));
             statement.execute();
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
     }
 
@@ -99,13 +103,13 @@ public class Tracker implements AutoCloseable {
      */
     public Item[] findAll() {
         List<Item> items = new ArrayList<>();
-        try (PreparedStatement statement = connection.prepareStatement(getQueryFromFile(path, "findall.sql"))) {
-            ResultSet rs = statement.executeQuery();
+        try (PreparedStatement statement = connection.prepareStatement("select id, name, description, creationdate from public.item;");
+             ResultSet rs = statement.executeQuery()) {
             while (rs.next()) {
                 items.add(new Item(rs.getString(1), rs.getString(2), rs.getString(3), LocalDateTime.parse(rs.getString(4).replace(' ', 'T'))));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
         return items.toArray(new Item[items.size()]);
     }
@@ -118,14 +122,14 @@ public class Tracker implements AutoCloseable {
      */
     public Item[] findByName(String key) {
         List<Item> items = new ArrayList<>();
-        try (PreparedStatement statement = connection.prepareStatement(getQueryFromFile(path, "findbyname.sql"))) {
+        try (PreparedStatement statement = connection.prepareStatement("select id, name, description, creationdate from public.item where name = ?;")) {
             statement.setString(1, key);
             ResultSet rs = statement.executeQuery();
             while (rs.next()) {
                 items.add(new Item(rs.getString(1), rs.getString(2), rs.getString(3), LocalDateTime.parse(rs.getString(4).replace(' ', 'T'))));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
         return items.toArray(new Item[items.size()]);
     }
@@ -138,16 +142,15 @@ public class Tracker implements AutoCloseable {
      */
     public Item findByID(String id) {
         Item result = null;
-        try (PreparedStatement statement = connection.prepareStatement(getQueryFromFile(path, "findbyid.sql"))) {
+        try (PreparedStatement statement = connection.prepareStatement("select id, name, description, creationdate from public.item where id = ?;")) {
             statement.setInt(1, Integer.parseInt(id));
             ResultSet rs = statement.executeQuery();
-
             if (rs.next()) {
                 result = new Item(rs.getString(1), rs.getString(2), rs.getString(3),
                         LocalDateTime.parse(rs.getString(4).replace(' ', 'T')));
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
         return result;
     }
@@ -174,7 +177,7 @@ public class Tracker implements AutoCloseable {
                 data = input.read();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
         return result.toString();
     }

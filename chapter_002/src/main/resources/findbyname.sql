@@ -1,1 +1,0 @@
-select id, name, description, creationdate from public.item where name = ?;

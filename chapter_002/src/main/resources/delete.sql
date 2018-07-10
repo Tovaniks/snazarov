@@ -1,1 +1,0 @@
-delete from public.item where id = ?;

@@ -1,5 +1,7 @@
 package ru.job4j.tracker;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +14,7 @@ import static org.junit.Assert.assertThat;
 
 public class StartUITest {
 
+    private static final Logger LOG = LogManager.getLogger(TrackerTest.class);
     private final PrintStream stdout = System.out;
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
     private final String separator = System.lineSeparator();
@@ -23,19 +26,17 @@ public class StartUITest {
     @Test
     public void whenUserAddItemsThenTrackerHasNewItemWithSameName() {
         try (Tracker tracker = new Tracker(new Config())) {
-            removeAll(tracker);
             Input input = new StubInput(new String[]{"0", "test name", "desc", "6"});
             new StartUI(input, tracker).init();
             assertThat(tracker.findAll()[0].getName(), is("test name"));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
     }
 
     @Test
     public void whenUpdateThenTrackerHasUpdatedValue() {
         try (Tracker tracker = new Tracker(new Config())) {
-            removeAll(tracker);
             String name = "test name";
             String description = "desc";
             Item item = tracker.add(new Item(name, description));
@@ -43,14 +44,13 @@ public class StartUITest {
             new StartUI(input, tracker).init();
             assertThat(tracker.findByID(item.getID()).getName(), is("new test"));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
     }
 
     @Test
     public void whenUserDeleteItemInTrackerThenItemBecomeLess() {
         try (Tracker tracker = new Tracker(new Config())) {
-            removeAll(tracker);
             Item first = new Item("Таска", "Первая моя");
             Item second = new Item("Баг", "второй мой");
             Item third = new Item("Баг", "третий мой");
@@ -62,14 +62,13 @@ public class StartUITest {
             System.out.println(menu);
             assertThat(tracker.findAll(), is(new Item[]{first, third}));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
     }
 
     @Test
     public void whenShowAll() {
         try (Tracker tracker = new Tracker(new Config())) {
-            removeAll(tracker);
             Item first = new Item("Таска", "Первая моя");
             Item second = new Item("Баг", "второй мой");
             tracker.add(first);
@@ -85,14 +84,13 @@ public class StartUITest {
                             this.separator, this.separator, this.separator, this.separator, this.separator)
                     ));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
     }
 
     @Test
     public void whenFindByIDThenShow() {
         try (Tracker tracker = new Tracker(new Config())) {
-            removeAll(tracker);
             Item first = new Item("Таска", "Первая моя");
             Item second = new Item("Баг", "второй мой");
             Item third = new Item("Баг", "третий мой");
@@ -108,14 +106,13 @@ public class StartUITest {
                             this.separator, "Дата создания: ", third.getTime(), this.separator, this.separator, this.separator,
                             this.separator, this.separator, this.separator)));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
     }
 
     @Test
     public void whenFindByNameThenShow() {
         try (Tracker tracker = new Tracker(new Config())) {
-            removeAll(tracker);
             Item first = new Item("Таска", "Первая моя");
             Item second = new Item("Баг", "второй мой");
             Item third = new Item("Баг", "третий мой");
@@ -134,7 +131,7 @@ public class StartUITest {
                                     third.getTime(), this.separator, this.separator, this.separator, this.separator, this.separator, this.separator)
                     ));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
 
     }
@@ -156,11 +153,12 @@ public class StartUITest {
         System.setOut(this.stdout);
     }
 
-    private void removeAll(Tracker tracker) {
+    @Before
+    public void removeAll() {
+        Tracker tracker = new Tracker(new Config());
         for (Item item : tracker.findAll()) {
             tracker.delete(item.getID());
         }
     }
-
 
 }

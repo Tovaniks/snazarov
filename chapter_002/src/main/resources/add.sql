@@ -1,1 +1,0 @@
-insert into public.item(name, description) values (?, ?) returning id, creationdate;

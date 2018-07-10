@@ -1,5 +1,8 @@
 package ru.job4j.tracker;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;
@@ -7,11 +10,12 @@ import static org.junit.Assert.assertThat;
 
 public class TrackerTest {
 
+    private static final Logger LOG = LogManager.getLogger(TrackerTest.class);
+
 
     @Test
     public void whenReplaceNameThenReturnNewName() {
         try (Tracker tracker = new Tracker(new Config())) {
-            removeAll(tracker);
             Item previous = new Item("test1", "testDescription");
             tracker.add(previous);
             Item next = new Item("test2", "testDescription2");
@@ -19,7 +23,7 @@ public class TrackerTest {
             tracker.replace(previous.getID(), next);
             assertThat(tracker.findByID(previous.getID()).getName(), is("test2"));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
     }
 
@@ -27,7 +31,6 @@ public class TrackerTest {
     @Test
     public void whenAddNewItem() {
         try (Tracker tracker = new Tracker(new Config())) {
-            removeAll(tracker);
             Item firstItem = new Item("task", "some text");
             Item secondItem = new Item("bug", "text");
             tracker.add(firstItem);
@@ -39,7 +42,7 @@ public class TrackerTest {
             }
             assertThat(result.length, is(expect.length));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
 
     }
@@ -48,10 +51,9 @@ public class TrackerTest {
     @Test
     public void whenTrackerIsEmpty() {
         try (Tracker tracker = new Tracker(new Config())) {
-            removeAll(tracker);
             assertThat(tracker.findAll(), is(new Item[]{}));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
     }
 
@@ -59,7 +61,6 @@ public class TrackerTest {
     @Test
     public void whenElevenItems() {
         try (Tracker tracker = new Tracker(new Config())) {
-            removeAll(tracker);
             Item[] massive = new Item[11];
             for (int index = 0; index < 11; index++) {
                 massive[index] = new Item("task", "some text");
@@ -67,7 +68,7 @@ public class TrackerTest {
             }
             assertThat(tracker.findAll(), is(massive));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
     }
 
@@ -75,7 +76,6 @@ public class TrackerTest {
     @Test
     public void whenFindByName() {
         try (Tracker tracker = new Tracker(new Config())) {
-            removeAll(tracker);
             Item[] expect = new Item[]{new Item("task", "какой-то текст"),
                     new Item("task", "еще какой-то текст"),
                     new Item("task", "и тут текст"),
@@ -91,7 +91,7 @@ public class TrackerTest {
             tracker.add(new Item("таска", "фича"));
             assertThat(tracker.findByName("task"), is(expect));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
 
     }
@@ -99,13 +99,12 @@ public class TrackerTest {
     @Test
     public void whenNotFindByName() {
         try (Tracker tracker = new Tracker(new Config())) {
-            removeAll(tracker);
             tracker.add(new Item("баг", "текст"));
             tracker.add(new Item("поручение", "рандомный текст"));
             tracker.add(new Item("фича", "тут что-то должно быть"));
             assertThat(tracker.findByName("task"), is(new Item[]{}));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
 
 
@@ -114,7 +113,6 @@ public class TrackerTest {
     @Test
     public void whenDeleteItemInMassive() {
         try (Tracker tracker = new Tracker(new Config())) {
-            removeAll(tracker);
             Item first = new Item("баг", "текст");
             Item second = new Item("поручение", "рандомный текст");
             Item third = new Item("фича", "тут что-то должно быть");
@@ -124,14 +122,13 @@ public class TrackerTest {
             tracker.delete(second.getID());
             assertThat(tracker.findAll(), is(new Item[]{first, third}));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
     }
 
     @Test
     public void whenFindItemByID() {
         try (Tracker tracker = new Tracker(new Config())) {
-            removeAll(tracker);
             Item first = new Item("баг", "текст");
             Item second = new Item("поручение", "рандомный текст");
             Item third = new Item("фича", "тут что-то должно быть");
@@ -141,11 +138,13 @@ public class TrackerTest {
             Item result = tracker.findByID(second.getID());
             assertThat(result, is(second));
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
     }
 
-    private void removeAll(Tracker tracker) {
+    @Before
+    public void removeAll() {
+        Tracker tracker = new Tracker(new Config());
         for (Item item : tracker.findAll()) {
             tracker.delete(item.getID());
         }
