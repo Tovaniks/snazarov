@@ -32,26 +32,13 @@ public class SimpleThreadPool {
 
     public SimpleThreadPool(final int core) {
         for (int index = 0; index < core; index++) {
-            threads.add(new Thread() {
-                @Override
-                public void run() {
-                    while (!stop) {
-                        while (tasks.isEmpty() && !stop) {
-                            synchronized (lock) {
-                                try {
-                                    lock.wait();
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                        if (stop) {
-                            break;
-                        }
+            threads.add(new Thread(() -> {
+                while (!stop) {
+                    while (!tasks.isEmpty()) {
                         tasks.poll().run();
                     }
                 }
-            });
+            }));
         }
     }
 
@@ -77,22 +64,17 @@ public class SimpleThreadPool {
         if (!init) {
             init();
         }
-        synchronized (lock) {
-            if (!stop) {
-                tasks.offer(new Thread(job));
-                lock.notifyAll();
-            }
+        if (!stop) {
+            tasks.offer(new Thread(job));
         }
+
     }
 
     /**
      * Остановка тасок. Запущенные отработают, новые не будут добавлены
      */
     public void shutdown() {
-        synchronized (lock) {
-            this.stop = true;
-            lock.notifyAll();
-        }
+        this.stop = true;
     }
 
 }
